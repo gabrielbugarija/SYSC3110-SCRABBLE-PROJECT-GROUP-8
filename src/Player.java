@@ -1,6 +1,6 @@
-import java.util.ArrayList;
-
 /// @author Kemal Sogut - 101280677
+
+import java.util.ArrayList;
 
 public class Player {
 
@@ -8,15 +8,40 @@ public class Player {
     private int score;
     private ArrayList<Tile> tiles;
 
+
     public Player(String name){
         this.name = name;
         this.score = 0;
-        initTiles();
+        this.tiles = new ArrayList<>();
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public ArrayList<Tile> getTilesList(){
+        return this.tiles;
+    }
+
+    public void drawTiles(TileBag tileBag) {
+
+        for(int i=0; i<7;i++){
+            assert tiles != null;
+                tiles.add(tileBag.drawTile());
+
+        }
 
     }
 
-    private void initTiles() {
-
+    public void printPlayerTiles(){
+        for(int i=0;i<tiles.size();i++){
+            Tile tile = tiles.get(i);
+            System.out.println(tile.getLetter()+": "+tile.getMultiplier());
+        }
     }
 
+    @Override
+    public String toString() {
+        return "\nPlayer Name: "+ this.name + " Score: "+this.score+" \n";
+    }
 }
