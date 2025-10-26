@@ -1,3 +1,5 @@
+/// @author Kemal Sogut - 101280677
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -10,7 +12,7 @@ public class TileBag {
         initializeTiles();
     }
     private void initializeTiles() {
-        addTiles('\0', 0, 2);
+        addTiles('\0', 1, 2);
         addTiles('A', 1, 9);
         addTiles('B', 3, 2);
         addTiles('C', 3, 2);
@@ -47,6 +49,8 @@ public class TileBag {
 
     }
 
+        /*
+ function to test drawn tile. Prints letter and number of left of the same letter in the bag.
     public void checkDraw(char letter){
         int count = 0;
         for(int i=0;i<tiles.size();i++){
@@ -57,6 +61,7 @@ public class TileBag {
         }
         System.out.println("\nLeft: " + count);
     }
+*/
 
     public int getNumberOfTilesLeft() {
         return tiles.size();
@@ -66,7 +71,6 @@ public class TileBag {
         Random randomGenerator = new Random();
         int randomIndex = randomGenerator.nextInt(tiles.size());
         Tile tileToReturn = tiles.get(randomIndex);
-        System.out.println("Tile drew: "+ tileToReturn.getLetter());
         tiles.remove(tileToReturn);
         return tileToReturn;
     }
