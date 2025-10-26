@@ -2,12 +2,12 @@
 
 public class Tile {
 
-    private int multiplier;
-    private char letter;
+    private final char letter;
+    private final int points;//The tile has points not a multiplier
 
-    public Tile(char letter, int multiplier){
-        this.multiplier = multiplier;
-        this.letter = letter;
+    public Tile(char letter, int points) {
+        this.letter = Character.toUpperCase(letter);
+        this.points = points;
     }
 
     public boolean isBlank(){
@@ -18,8 +18,8 @@ public class Tile {
         return letter;
     }
 
-    public int getMultiplier() {
-        return multiplier;
+    public int getPoints() {
+        return points;
     }
 
     @Override

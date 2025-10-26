@@ -1,22 +1,21 @@
 /// @author Kemal Sogut - 101280677
 
-public class Cell {
+public class Cell  {
     private int multiplier;
     private Tile tile;
     private boolean empty;
 
     public Cell(){
         this.multiplier = 1;
-        this.empty = true;
     }
 
 
     public Cell(int multiplier){
         this.multiplier = multiplier;
-        this.empty = true;
     }
 
     public int getMultiplier() {
+
         return multiplier;
     }
 
@@ -37,7 +36,8 @@ public class Cell {
     }
 
     public int getTileMultiplier(){
-        return tile.getMultiplier();
+
+        return tile.getPoints();
     }
 
     public void setMultiplier(int multiplier) {
