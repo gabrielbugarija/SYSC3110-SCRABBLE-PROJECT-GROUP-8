@@ -12,16 +12,18 @@ public class Player {
     public Player(String name){
         this.name = name;
         this.score = 0;
-
-
-
+        this.tiles = new ArrayList<>();
     }
 
     public String getName(){
         return this.name;
     }
 
-    private void initTiles(TileBag tileBag) {
+    public ArrayList<Tile> getTilesList(){
+        return this.tiles;
+    }
+
+    public void drawTiles(TileBag tileBag) {
 
         for(int i=0; i<7;i++){
             assert tiles != null;

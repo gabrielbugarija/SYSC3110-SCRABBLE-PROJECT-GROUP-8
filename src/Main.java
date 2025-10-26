@@ -21,7 +21,7 @@ public class Main {
                 break;
             }
 
-            takeTurn(playersList.get(currentPlayer), tileBag);
+            takeTurn(playersList.get(currentPlayer), tileBag, board, scanner);
 
             if(currentPlayer<playersList.size()-1){
                 currentPlayer++;
@@ -45,8 +45,23 @@ public class Main {
 
     }
 
-    public static void takeTurn(Player player, TileBag tileBag) {
+    public static void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
         System.out.print("\n"+player.getName()+" played...");
+        player.drawTiles(tileBag);
+
+        while (true) {
+            System.out.println("What do you want to do? (0: Pass, 1: Place Tiles, 2: Swap Tiles) ");
+            int action = scanner.nextInt();
+
+            if (action <= 2 && action >= 0) {
+                break;
+            } else {
+                System.out.println(("Invalid entry!"));
+            }
+        }
+
+
+
 
 
     }
