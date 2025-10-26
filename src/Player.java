@@ -9,12 +9,16 @@ public class Player {
     private ArrayList<Tile> tiles;
 
 
-    public Player(String name, TileBag tileBag){
+    public Player(String name){
         this.name = name;
         this.score = 0;
-        tiles = new ArrayList<>(7);
-        initTiles(tileBag);
 
+
+
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     private void initTiles(TileBag tileBag) {
@@ -32,5 +36,10 @@ public class Player {
             Tile tile = tiles.get(i);
             System.out.println(tile.getLetter()+": "+tile.getMultiplier());
         }
+    }
+
+    @Override
+    public String toString() {
+        return "\nPlayer Name: "+ this.name + " Score: "+this.score+" \n";
     }
 }
