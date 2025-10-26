@@ -25,20 +25,21 @@ public class Player {
 
     public void drawTiles(TileBag tileBag) {
 
-        for(int i=0; i<7;i++){
-            assert tiles != null;
-                tiles.add(tileBag.drawTile());
+        while(tiles.size()<7) {
 
+
+            tiles.add(tileBag.drawTile());
         }
-
     }
 
     public void printPlayerTiles(){
         for(int i=0;i<tiles.size();i++){
             Tile tile = tiles.get(i);
-            System.out.println(tile.getLetter()+": "+tile.getMultiplier());
+            System.out.println(tile.getLetter()+": "+tile.getPoints());
         }
     }
+
+
 
     @Override
     public String toString() {

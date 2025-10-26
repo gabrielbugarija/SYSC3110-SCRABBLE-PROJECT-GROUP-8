@@ -50,6 +50,7 @@ public class Main {
         player.drawTiles(tileBag);
 
         while (true) {
+            player.printPlayerTiles();
             System.out.println("What do you want to do? (0: Pass, 1: Place Tiles, 2: Swap Tiles) ");
             int action = scanner.nextInt();
 

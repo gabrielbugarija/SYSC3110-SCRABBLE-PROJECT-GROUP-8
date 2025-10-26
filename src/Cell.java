@@ -7,6 +7,7 @@ public class Cell  {
 
     public Cell(){
         this.multiplier = 1;
+        this.empty=true;
     }
 
 
