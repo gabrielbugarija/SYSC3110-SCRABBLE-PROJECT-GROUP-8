@@ -5,24 +5,23 @@ import java.util.*;
 public class Player {
 
     private String name;
-    private int score;
+    private int totalScore;
     private ArrayList<Tile> rack;
     private TileBag tileBag = new TileBag();
 
     public Player(String name, TileBag tileBag){
         this.name = name;
-        this.score = 0;
+        this.totalScore = 0;
         this.rack = new ArrayList<>();
         this.tileBag = tileBag;
         initTiles(tileBag);
     }
 
     public String getName(){
-
         return this.name;
     }
 
-    public ArrayList<Tile> getRack(){
+    public ArrayList<Tile> getRackTiles(){
         return this.rack;
     }
 
@@ -55,8 +54,10 @@ public class Player {
     }
     }
 
-    public void updateScore(int scoreToAdd){
-        score += scoreToAdd;
+    private void drawTiles(TileBag tileBag, int neededTiles) {
+        for (int i = 0; i < neededTiles && tileBag.getNumberOfTilesLeft() > 0; i++) {
+            rack.add(tileBag.drawTile());
+        }
     }
 
     public int getScore(){
