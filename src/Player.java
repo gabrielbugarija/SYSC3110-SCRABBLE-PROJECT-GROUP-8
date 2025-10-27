@@ -17,7 +17,6 @@ public class Player {
     }
 
     public String getName(){
-
         return this.name;
     }
 
