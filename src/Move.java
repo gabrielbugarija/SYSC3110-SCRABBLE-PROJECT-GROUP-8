@@ -10,7 +10,7 @@ public class Move {
     public Move(Player player, TileBag tileBag, Board board, Scanner scanner) {
 
         this.player = player;
-        player.drawTiles(tileBag);
+
         player.printRack();
         Dictionary dictionary = new Dictionary();
         makeMove(player, tileBag, board, scanner);
@@ -33,6 +33,7 @@ public class Move {
                 System.out.println(("Invalid entry!"));
             }
         }
+
         if (action == 0){
             boolean isWordValid = false;
 
@@ -71,6 +72,7 @@ public class Move {
                 else{
                     isWordValid = true;
                     placeTiles(board, direction, tilesToPlace, setRow, setColumn);
+                    board.printBoard();
                 }
 
             }
@@ -134,7 +136,6 @@ public class Move {
                     word.insert(0, cell.getLetter());
                     scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
                     upper--;
-
                 }
                 else{
                     foundNull = true;
@@ -147,7 +148,6 @@ public class Move {
                     word.append(cell.getLetter());
                     scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
                     lower++;
-
                 }
                 else{
                     foundNull = true;
@@ -270,10 +270,8 @@ public class Move {
         if(true) {
             return scoreToAdd;
         } else {
-
             return 0;
         }
-
 
     }
 

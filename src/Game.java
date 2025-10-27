@@ -63,7 +63,7 @@ public class Game {
         for(int i = 0; i<numberOfPlayers; i++){
             System.out.print("Please enter player name: ");
             String name = scanner.nextLine();
-            playersList.add(new Player(name));
+            playersList.add(new Player(name, tileBag));
         }
     }
     public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
