@@ -15,6 +15,7 @@ public class Player {
     }
 
     public String getName(){
+
         return this.name;
     }
 
@@ -22,7 +23,11 @@ public class Player {
         return this.rack;
     }
 
-    public void drawTiles(TileBag tileBag) {
+    public void removeTiles(List<Tile> tiles) {
+        if (tiles != null) {
+            this.rack.removeAll(tiles);
+        }
+    }
 
         while(rack.size()<7) {
             rack.add(tileBag.drawTile());
@@ -46,7 +51,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return "\nPlayer Name: "+ this.name + " Score: "+this.score+" \n";
+        return "\nPlayer Name: "+ this.name + " Score: "+this.totalScore +" \n";
     }
 
 }
