@@ -114,6 +114,10 @@ public class Move {
             System.out.print("Tile placing error!");
         }
 
+        for(int i = 0; i<tilesToPlace.size(); i++ ) {
+            player.removeTiles(tilesToPlace.get(i).getLetter());
+        }
+        player.drawTiles();
 
     }
 

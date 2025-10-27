@@ -33,18 +33,24 @@ public class Player {
             rack.add(tileBag.drawTile());
 
         }
+    }
+
+    public void drawTiles(){
+
+        while (rack.size()<7){
+            rack.add(tileBag.drawTile());
+        }
 
     }
 
+    public void removeTiles(char c) {
 
-    public void removeTiles(List<Tile> tiles) {
-        if (tiles != null) {
-            this.rack.removeAll(tiles);
+        for(int i=0;i<rack.size();i++){
+            if(rack.get(i).getLetter()==c){
+                rack.remove(i);
+            }
         }
 
-        while (rack.size() < 7) {
-            rack.add(tileBag.drawTile());
-        }
     }
 
 
