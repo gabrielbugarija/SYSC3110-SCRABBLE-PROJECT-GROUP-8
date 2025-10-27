@@ -23,6 +23,10 @@ public class Board {
 
     }
 
+    public Cell getCell(int row, int col){
+        return board[row][col];
+    }
+
     public void printBoard(){
 
         for (Cell[] row : board) {

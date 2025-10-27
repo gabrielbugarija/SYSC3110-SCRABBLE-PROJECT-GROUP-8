@@ -32,9 +32,9 @@ private final Set<String> validWords =  new HashSet<>(Set.of("ability", "absorb"
         "zebra", "zenith", "zero", "zone", "zodiac"));
 
 // Constructor for file pathways(Later milestones)
-public Dictionary() {
+    public Dictionary() {
 
-}
+    }
 
 // Method to return true if provided word is valid or not given the validWords set
 public boolean isValidWord(String word) {
