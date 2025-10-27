@@ -5,13 +5,13 @@ import java.util.*;
 public class Player {
     //player class
     private String name;
-    private int totalScore;
+    private int score;
     private ArrayList<Tile> rack;
     private TileBag tileBag = new TileBag();
 
     public Player(String name, TileBag tileBag){
         this.name = name;
-        this.totalScore = 0;
+        this.score = 0;
         this.rack = new ArrayList<>();
         this.tileBag = tileBag;
         initTiles(tileBag);
@@ -33,6 +33,8 @@ public class Player {
 
         }
     }
+
+
 
     public void drawTiles(){
 
@@ -75,4 +77,8 @@ public class Player {
         return "\nPlayer Name: "+ this.name + " Score: "+this.score +" \n";
     }
 
+    public ArrayList<Tile> getRack() {
+
+        return this.rack;
     }
+}
