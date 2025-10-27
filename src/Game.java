@@ -11,6 +11,7 @@ public class Game {
 
     public Game (Board board){
         this.board = board;
+        this.isGameOver=false;
     }
 
     public void runGame(){
@@ -23,9 +24,9 @@ public class Game {
         board.printBoard();
 
 
-        while (true){
+        while(true){
 
-            if(!isGameOver){
+            if(isGameOver){
                 break;
             }
 
@@ -62,10 +63,14 @@ public class Game {
         for(int i = 0; i<numberOfPlayers; i++){
             System.out.print("Please enter player name: ");
             String name = scanner.nextLine();
-            playersList.add(new Player(name));
+            playersList.add(new Player(name, tileBag));
         }
     }
     public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
+        System.out.print("Player: "+player.getName());
+        Move move = new Move(player, tileBag, board, scanner);
+
+        move.makeMove(player,tileBag,board,scanner);
 
     }
 }

@@ -7,14 +7,20 @@ public class Move {
 
     private Player player;
 
-    public Move(Player player, TileBag tileBag, Board board, Scanner scanner){
+    public Move(Player player, TileBag tileBag, Board board, Scanner scanner) {
 
-        player.drawTiles(tileBag);
-        player.printRack();
+        this.player = player;
+
         Dictionary dictionary = new Dictionary();
+
+
+    }
+
+    public void makeMove(Player player, TileBag tileBag, Board board, Scanner scanner){
+        player.printRack();
         int action;
-        int direction = -1;
         int moveScore;
+        int direction = -1;
         ArrayList<Integer> setRow = new ArrayList<>();
         ArrayList<Integer> setColumn = new ArrayList<>();
         ArrayList<Tile> tilesToPlace = new ArrayList<>();
@@ -23,6 +29,7 @@ public class Move {
         while (true) {
             System.out.println("What do you want to do? (0: Place Tiles, 1: Swap Tiles, 2: Pass) ");
             action = scanner.nextInt();
+            scanner.nextLine();// consume enter line.
 
             if (action <= 2 && action >= 0) {
                 break;
@@ -30,10 +37,11 @@ public class Move {
                 System.out.println(("Invalid entry!"));
             }
         }
-        if (action == 0){
-            boolean isWordValid = true;
 
-            while(isWordValid) {
+        if (action == 0){
+            boolean isWordValid = false;
+
+            while(!isWordValid) {
 
                 while (direction == -1) {
                     setRow.clear();
@@ -61,8 +69,15 @@ public class Move {
                     }
                     direction = checkDirection(setRow, setColumn);
                 }
-                isWordValid = checkValidatyOfWord(direction, tilesToPlace, setRow, setColumn, board);
-
+                moveScore = checkValidityOfWordAndReturnScore(direction, tilesToPlace, setRow, setColumn, board);
+                if (moveScore == 0){
+                    isWordValid = false;
+                }
+                else{
+                    isWordValid = true;
+                    placeTiles(board, direction, tilesToPlace, setRow, setColumn);
+                    board.printBoard();
+                }
 
             }
 
@@ -75,8 +90,35 @@ public class Move {
         }
     }
 
+    public void placeTiles(Board board, int direction, ArrayList<Tile> tilesToPlace, ArrayList<Integer> rowsList, ArrayList<Integer> columnsList){
+        boolean successful;
+        if (direction == 0){
+            int row = rowsList.getFirst();
+            for (int i=0; i<tilesToPlace.size();i++){
+                board.setCell(row, columnsList.get(i), tilesToPlace.get(i));
+                successful = true;
+            }
 
-    private boolean checkValidatyOfWord(int direction, ArrayList<Tile> tilesToPlace, ArrayList<Integer> setRow, ArrayList<Integer> setCol, Board board) {
+        } else if (direction == 1) {
+            int column = columnsList.getFirst();
+            for (int i=0; i<tilesToPlace.size();i++){
+                board.setCell(rowsList.get(i),column, tilesToPlace.get(i));
+                successful = true;
+            }
+
+        } else if (direction == 2) {
+            board.setCell(rowsList.getFirst(),columnsList.getFirst(), tilesToPlace.getFirst());
+            successful = true;
+        }
+        else {
+            System.out.print("Tile placing error!");
+        }
+
+
+    }
+
+
+    private int checkValidityOfWordAndReturnScore(int direction, ArrayList<Tile> tilesToPlace, ArrayList<Integer> setRow, ArrayList<Integer> setCol, Board board) {
         Dictionary dictionary = new Dictionary();
         StringBuilder word = new StringBuilder();
         int scoreToAdd = 0 ;
@@ -98,7 +140,6 @@ public class Move {
                     word.insert(0, cell.getLetter());
                     scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
                     upper--;
-
                 }
                 else{
                     foundNull = true;
@@ -111,7 +152,6 @@ public class Move {
                     word.append(cell.getLetter());
                     scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
                     lower++;
-
                 }
                 else{
                     foundNull = true;
@@ -151,94 +191,91 @@ public class Move {
 
         }
         else if (direction == 2) {
-            int row = setRow.getFirst();
-            int col = setCol.getFirst();
-            StringBuilder horizontalWord = new StringBuilder();
-            StringBuilder verticalWord = new StringBuilder();
+//            int row = setRow.getFirst();
+//            int col = setCol.getFirst();
+//            StringBuilder horizontalWord = new StringBuilder();
+//            StringBuilder verticalWord = new StringBuilder();
+//
+//            horizontalWord.append(word.toString());
+//            verticalWord.append(word.toString());
+//
+//            boolean foundNull = false;
+//            Cell cell;
+//
+//            int i = row;
+//            while(i>0 && !foundNull){
+//                cell = board.getCell(i-1,col);
+//                if(!cell.isEmpty()){
+//                    verticalWord.insert(0, cell.getLetter());
+//                    i--;
+//                }
+//                else{
+//                    foundNull = true;
+//                }
+//            }
+//            i = row;
+//
+//            while(i<14 && !foundNull){
+//                cell = board.getCell(i+1,col);
+//                if(!cell.isEmpty()){
+//                    horizontalWord.append(cell.getLetter());
+//                    i++;
+//
+//                }
+//                else{
+//                    foundNull = true;
+//                }
+//            }
+//
+//            foundNull = false;
+//            i = col;
+//            ArrayList<Tile> temp = tilesToScore;   // act as a save point for tilesToScore
+//
+//            if(!dictionary.isValidWord(horizontalWord.toString())){
+//                tilesToScore.clear();
+//            }
+//            while(i>0 && !foundNull){
+//                cell = board.getCell(row,i-1);
+//                if(!cell.isEmpty()){
+//                    verticalWord.insert(0, cell.getLetter());
+//                    i--;
+//                    tilesToScore.add(cell.getTile());
+//                }
+//                else{
+//                    foundNull = true;
+//                }
+//            }
+//
+//            i = col;
+//
+//            while(i<14 && !foundNull){
+//                cell = board.getCell(rowsList.getFirst(),i+1);
+//                if(!cell.isEmpty()){
+//                    verticalWord.append(cell.getLetter());
+//                    i++;
+//                    tilesToScore.add(cell.getTile());
+//                }
+//                else{
+//                    foundNull = true;
+//                }
+//            }
+//
+//
+//            if (!dictionary.isValidWord(verticalWord.toString())){
+//                tilesToScore = temp;
+//            }
 
-            horizontalWord.append(word.toString());
-            verticalWord.append(word.toString());
-
-            boolean foundNull = false;
-            Cell cell;
-
-            int i = row;
-            while(i>0 && !foundNull){
-                cell = board.getCell(i-1,col);
-                if(!cell.isEmpty()){
-                    verticalWord.insert(0, cell.getLetter());
-
-                    i--;
-                }
-                else{
-                    foundNull = true;
-                }
-
-            }
-            i = row;
-
-            while(i<14 && !foundNull){
-                cell = board.getCell(i+1,col);
-                if(!cell.isEmpty()){
-                    horizontalWord.append(cell.getLetter());
-                    i++;
-
-                }
-                else{
-                    foundNull = true;
-                }
-            }
-
-            foundNull = false;
-            i = col;
-            ArrayList<Tile> temp = tilesToScore;   // act as a save point for tilesToScore
-
-            if(!dictionary.isValidWord(horizontalWord.toString())){
-                tilesToScore.clear();
-            }
-
-
-            while(i>0 && !foundNull){
-                cell = board.getCell(row,i-1);
-                if(!cell.isEmpty()){
-                    verticalWord.insert(0, cell.getLetter());
-                    i--;
-                    tilesToScore.add(cell.getTile());
-                }
-                else{
-                    foundNull = true;
-                }
-            }
-
-            i = col;
-
-            while(i<14 && !foundNull){
-                cell = board.getCell(rowsList.getFirst(),i+1);
-                if(!cell.isEmpty()){
-                    verticalWord.append(cell.getLetter());
-                    i++;
-                    tilesToScore.add(cell.getTile());
-                }
-                else{
-                    foundNull = true;
-                }
-            }
-
-
-            if (!dictionary.isValidWord(verticalWord.toString())){
-                tilesToScore = temp;
-            }
+            scoreToAdd = 10; //random value for testing;
         }
 
         // dictionary.isValidWord(word.toString())
+        System.out.print("Word: "+ word.toString());
+        System.out.print("Score: "+scoreToAdd);
         if(true) {
-            tilesToScore.addAll(tilesToPlace);
-            return true;
+            return scoreToAdd;
         } else {
-            tilesToScore.clear();
-            return false;
+            return 0;
         }
-
 
     }
 
