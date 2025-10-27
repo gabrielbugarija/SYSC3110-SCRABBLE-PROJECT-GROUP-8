@@ -11,6 +11,7 @@ public class Game {
 
     public Game (Board board){
         this.board = board;
+        this.isGameOver=false;
     }
 
     public void runGame(){
@@ -23,9 +24,9 @@ public class Game {
         board.printBoard();
 
 
-        while (true){
+        while(true){
 
-            if(!isGameOver){
+            if(isGameOver){
                 break;
             }
 
@@ -66,6 +67,8 @@ public class Game {
         }
     }
     public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
+        Move move = new Move(player, tileBag, board, scanner );
+        move.makeMove(player,tileBag,board,scanner);
 
     }
 }
