@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.*;
 
 public class Player {
-
+    //player class
     private String name;
     private int score;
     private ArrayList<Tile> rack;
