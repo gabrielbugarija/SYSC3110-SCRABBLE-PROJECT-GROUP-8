@@ -22,7 +22,7 @@ private final Set<String> validWords =  new HashSet<>(Set.of("ability", "absorb"
         "package", "page", "pain", "paint", "parent",
         "quality", "quantity", "quarter", "queen", "query",
         "race", "radio", "rain", "raise", "range",
-        "safe", "salary", "sample", "scene", "school",
+        "safe", "salary", "sample", "scene", "school","set",
         "table", "tackle", "talent", "talk", "target",
         "unable", "uncle", "under", "uniform", "unique",
         "vacant", "valid", "value", "variety", "vehicle",

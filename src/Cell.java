@@ -36,11 +36,15 @@ public class Cell  {
         setOccupied();
     }
 
+
+
+
     public Tile getTile() {
         return tile;
     }
 
-    public int getTileMultiplier(){
+
+    public int getTilePoints(){
 
         return tile.getPoints();
     }
@@ -54,6 +58,7 @@ public class Cell  {
     }
 
     public void setEmpty() {
+        this.tile=null;
         this.empty = true;
     }
 

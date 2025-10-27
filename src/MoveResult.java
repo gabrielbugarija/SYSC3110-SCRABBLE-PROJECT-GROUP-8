@@ -8,6 +8,7 @@ public class MoveResult {
     private String message;
 
 
+
     public boolean isSuccess() {
         return success;
     }

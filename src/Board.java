@@ -2,10 +2,12 @@
 
 public class Board {
     private Cell[][] board;
+    private boolean empty;
 
     public Board(){
         this.board = new Cell[15][15];
         initBoard();
+        this.empty=true;
     }
 
     private void initBoard(){
@@ -20,11 +22,19 @@ public class Board {
 
     public void setCell(int row, int column, Tile tile){
         board[row][column].setTile(tile);
+        empty=false;
+    }
 
+    public boolean isEmpty(){
+        return this.empty;
     }
 
     public Cell getCell(int row, int col){
         return board[row][col];
+    }
+
+    public void clearCell(int row, int col){
+        board[row][col].setEmpty();
     }
 
     public void printBoard(){

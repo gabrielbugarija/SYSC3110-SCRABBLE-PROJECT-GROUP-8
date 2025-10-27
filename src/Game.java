@@ -25,7 +25,7 @@ public class Game {
 
         while (true){
 
-            if(isBoardFull){
+            if(!isGameOver){
                 break;
             }
 
@@ -35,7 +35,7 @@ public class Game {
                 currentPlayer++;
             }
             else{
-                isBoardFull=true;
+                isGameOver=true;
                 currentPlayer=0;
             }
         }
@@ -65,72 +65,7 @@ public class Game {
             playersList.add(new Player(name));
         }
     }
-
-
     public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
 
-        Dictionary dictionary = new Dictionary();
-        int action;
-
-        player.drawTiles(tileBag);
-
-        while (true) {
-            player.printPlayerTiles();
-            System.out.println("What do you want to do? (0: Place Tiles, 1: Swap Tiles, 2: Pass) ");
-            action = scanner.nextInt();
-
-            if (action <= 2 && action >= 0) {
-                break;
-            } else {
-                System.out.println(("Invalid entry!"));
-            }
-        }
-
-        if (action == 0){
-            boolean isWordValid = true;
-            Set<Integer> setRow = new LinkedHashSet<>();
-            Set<Integer> setColumn = new LinkedHashSet<>();
-            ArrayList<Tile> tilesToPlace = new ArrayList<>();
-
-            while(isWordValid) {
-                setRow.clear();
-                setColumn.clear();
-                tilesToPlace.clear();
-
-                System.out.print("Enter how many tile(s) you want to place (1-7)");
-                int numberOfTilesToPlace = scanner.nextInt();
-                scanner.nextLine();  // Consuming "Enter" line
-
-                for (int i = 0; i < numberOfTilesToPlace; i++) {
-                    System.out.print("Please enter tile " + (i + 1) + " (0-6): ");
-                    int tileIndexToPlace = scanner.nextInt();
-                    scanner.nextLine();  // Consuming "Enter" line
-
-                    tilesToPlace.add(player.getRack().get(tileIndexToPlace));
-
-                    System.out.print("Please enter row position for tile " + (i + 1) + " (index 0-14): ");
-                    setRow.add(scanner.nextInt());
-                    scanner.nextLine(); // Consuming "Enter" line
-
-                    System.out.print("Please enter column position for tile " + (i + 1) + " (index 0-14): ");
-                    setColumn.add(scanner.nextInt());
-                    scanner.nextLine(); // Consuming "Enter" line
-                }
-                PlaceTiles placeTiles = new PlaceTiles(player, board, tilesToPlace, setRow, setColumn); // should move into a class
-                isWordValid = placeTiles.isSuccessful();
-                if (!isWordValid){
-                    System.out.print("The word is not valid! Please enter again.");
-                }
-            }
-
-        }
-        else if (action == 1) {
-            System.out.print("Player swapped! ");
-        }
-        else if (action == 2) {
-            System.out.print("Player passed! ");
-        }
-        board.printBoard();
     }
-
 }

@@ -1,6 +1,6 @@
 /// @author Kemal Sogut - 101280677
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Player {
 
@@ -29,7 +29,7 @@ public class Player {
         }
     }
 
-    public void printPlayerTiles(){
+    public void printRack(){
         for(int i=0;i<rack.size();i++){
             Tile tile = rack.get(i);
             System.out.println(tile.getLetter()+": "+tile.getPoints());
@@ -40,10 +40,13 @@ public class Player {
         score += scoreToAdd;
     }
 
-
+    public int getScore(){
+        return score;
+    }
 
     @Override
     public String toString() {
         return "\nPlayer Name: "+ this.name + " Score: "+this.score+" \n";
     }
+
 }
