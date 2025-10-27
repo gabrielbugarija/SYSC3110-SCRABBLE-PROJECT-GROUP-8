@@ -74,4 +74,12 @@ public class TileBag {
         tiles.remove(tileToReturn);
         return tileToReturn;
     }
+
+    public void returnTile(Tile tile){
+        tiles.add(tile);
+    }
+
+    public int size(){
+        return tiles.size();
+    }
 }
