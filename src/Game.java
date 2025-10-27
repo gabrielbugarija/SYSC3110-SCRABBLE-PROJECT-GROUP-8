@@ -67,7 +67,9 @@ public class Game {
         }
     }
     public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
-        Move move = new Move(player, tileBag, board, scanner );
+        System.out.print("Player: "+player.getName());
+        Move move = new Move(player, tileBag, board, scanner);
+
         move.makeMove(player,tileBag,board,scanner);
 
     }

@@ -11,21 +11,25 @@ public class Move {
 
         this.player = player;
 
-        player.printRack();
         Dictionary dictionary = new Dictionary();
-        makeMove(player, tileBag, board, scanner);
+
 
     }
+
     public void makeMove(Player player, TileBag tileBag, Board board, Scanner scanner){
+        player.printRack();
         int action;
         int moveScore;
         int direction = -1;
         ArrayList<Integer> setRow = new ArrayList<>();
         ArrayList<Integer> setColumn = new ArrayList<>();
         ArrayList<Tile> tilesToPlace = new ArrayList<>();
+
+
         while (true) {
             System.out.println("What do you want to do? (0: Place Tiles, 1: Swap Tiles, 2: Pass) ");
             action = scanner.nextInt();
+            scanner.nextLine();// consume enter line.
 
             if (action <= 2 && action >= 0) {
                 break;
