@@ -1,3 +1,11 @@
+/**
+ * Runs the *Scrabble*  game on the board given.
+ *
+ * @author Kemal Sogut - 101280677
+ * @param board : the game board object.
+ *
+*/
+
 import java.util.*;
 
 public class Game {

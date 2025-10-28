@@ -118,7 +118,21 @@ public class Move {
 
         }
         else if (action == 1) {
-            System.out.print("Player swapped! ");
+            int indexToSwap;
+            while (true){
+                System.out.print("\nPlease enter the index of the tile you want to swap: (index 0-6)");
+                indexToSwap = scanner.nextInt();
+                scanner.nextInt();// consume enter line;
+
+                if (indexToSwap>=0 && indexToSwap<15){
+                    break;
+                }
+                System.out.print("Invalid entry. Please try again\n");
+
+            }
+
+            player.removeTiles(indexToSwap);
+            player.drawTiles();
         }
         else if (action == 2) {
             System.out.print("Player passed! ");
