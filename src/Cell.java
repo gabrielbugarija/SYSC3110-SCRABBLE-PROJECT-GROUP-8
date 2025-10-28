@@ -1,4 +1,10 @@
-/// @author Kemal Sogut - 101280677
+/**
+ *
+ * Represents a single cell on the game board.
+ * @author Kemal Sogut - 101280677
+ * @param multiplier the multiplier of tha cell.
+ *
+ */
 
 public class Cell  {
     private int multiplier;
