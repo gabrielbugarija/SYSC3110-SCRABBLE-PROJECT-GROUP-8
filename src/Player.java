@@ -1,17 +1,26 @@
+/**
+ * @author Kemal Sogut - 101280677
+ *
+ * @param name The player name
+ * @param tileBag The tile bag used in the game.
+ *
+ */
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
 
 public class Player {
-
+    //player class
     private String name;
-    private int totalScore;
+    private int score;
     private ArrayList<Tile> rack;
     private TileBag tileBag = new TileBag();
 
     public Player(String name, TileBag tileBag){
         this.name = name;
-        this.totalScore = 0;
+        this.score = 0;
         this.rack = new ArrayList<>();
         this.tileBag = tileBag;
         initTiles(tileBag);
@@ -32,18 +41,28 @@ public class Player {
             rack.add(tileBag.drawTile());
 
         }
+    }
+
+    public void drawTiles(){
+
+        while (rack.size()<7){
+            rack.add(tileBag.drawTile());
+        }
 
     }
 
+    public void removeTiles(char c) {
 
-    public void removeTiles(List<Tile> tiles) {
-        if (tiles != null) {
-            this.rack.removeAll(tiles);
+        for(int i=0;i<rack.size();i++){
+            if(rack.get(i).getLetter()==c){
+                rack.remove(i);
+            }
         }
 
-        while (rack.size() < 7) {
-            rack.add(tileBag.drawTile());
-        }
+    }
+
+    public void removeTiles(int i) {
+        rack.remove(i);
     }
 
 
@@ -69,4 +88,8 @@ public class Player {
         return "\nPlayer Name: "+ this.name + " Score: "+this.score +" \n";
     }
 
+    public ArrayList<Tile> getRack() {
+
+        return this.rack;
     }
+}

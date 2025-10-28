@@ -48,24 +48,59 @@ public class Move {
                     setColumn.clear();
                     tilesToPlace.clear();
 
-                    System.out.print("Enter how many tile(s) you want to place (1-7)");
-                    int numberOfTilesToPlace = scanner.nextInt();
-                    scanner.nextLine();  // Consuming "Enter" line
+                    int numberOfTilesToPlace;
 
-                    for (int i = 0; i < numberOfTilesToPlace; i++) {
-                        System.out.print("Please enter tile " + (i + 1) + " (index 0-6): ");
-                        int tileIndexToPlace = scanner.nextInt();
+                    while (true) {
+                        System.out.print("Enter how many tile(s) you want to place (1-7)");
+                        numberOfTilesToPlace = scanner.nextInt();
                         scanner.nextLine();  // Consuming "Enter" line
 
+                        if (numberOfTilesToPlace>1 && numberOfTilesToPlace<8){
+                            break;
+                        }
+                        System.out.print("Invalid entry. Please try again\n");
+                    }
+                    for (int i = 0; i < numberOfTilesToPlace; i++) {
+                        int tileIndexToPlace;
+                        while (true) {
+                            System.out.print("Please enter tile " + (i + 1) + " (index 0-6): ");
+                            tileIndexToPlace = scanner.nextInt();
+                            scanner.nextLine();  // Consuming "Enter" line
+
+                            if (tileIndexToPlace>1 && tileIndexToPlace<7){
+                                break;
+                            }
+                            System.out.print("Invalid entry. Please try again\n");
+                        }
                         tilesToPlace.add(player.getRack().get(tileIndexToPlace));
+                        int row;
+                        int col;
+                        while (true) {
+                            System.out.print("Please enter row position for tile " + (i + 1) + " (index 0-14): ");
+                            row = scanner.nextInt();
+                            scanner.nextLine();// Consuming "Enter" line
+                            if (row>=0 && row<15){
+                                break;
+                            }
+                            System.out.print("Invalid entry. Please try again\n");
+                        }
 
-                        System.out.print("Please enter row position for tile " + (i + 1) + " (index 0-14): ");
-                        setRow.add(scanner.nextInt());
-                        scanner.nextLine(); // Consuming "Enter" line
+                            setRow.add(row);
 
-                        System.out.print("Please enter column position for tile " + (i + 1) + " (index 0-14): ");
-                        setColumn.add(scanner.nextInt());
-                        scanner.nextLine(); // Consuming "Enter" line
+
+                        while (true) {
+                            System.out.print("Please enter column position for tile " + (i + 1) + " (index 0-14): ");
+                            col = scanner.nextInt();
+                            scanner.nextLine(); // Consuming "Enter" line
+
+                            if (col>=0 && col<15){
+                                break;
+                            }
+                            System.out.print("Invalid entry. Please try again\n");
+
+                        }
+                        setColumn.add(col);
+
                     }
                     direction = checkDirection(setRow, setColumn);
                 }
@@ -83,7 +118,21 @@ public class Move {
 
         }
         else if (action == 1) {
-            System.out.print("Player swapped! ");
+            int indexToSwap;
+            while (true){
+                System.out.print("\nPlease enter the index of the tile you want to swap: (index 0-6)");
+                indexToSwap = scanner.nextInt();
+                scanner.nextInt();// consume enter line;
+
+                if (indexToSwap>=0 && indexToSwap<15){
+                    break;
+                }
+                System.out.print("Invalid entry. Please try again\n");
+
+            }
+
+            player.removeTiles(indexToSwap);
+            player.drawTiles();
         }
         else if (action == 2) {
             System.out.print("Player passed! ");
@@ -114,6 +163,10 @@ public class Move {
             System.out.print("Tile placing error!");
         }
 
+        for(int i = 0; i<tilesToPlace.size(); i++ ) {
+            player.removeTiles(tilesToPlace.get(i).getLetter());
+        }
+        player.drawTiles();
 
     }
 
@@ -268,10 +321,9 @@ public class Move {
             scoreToAdd = 10; //random value for testing;
         }
 
-        // dictionary.isValidWord(word.toString())
-        System.out.print("Word: "+ word.toString());
-        System.out.print("Score: "+scoreToAdd);
-        if(true) {
+        if(dictionary.isValidWord(word.toString())) {
+            System.out.print("Word: "+ word.toString());
+            System.out.print("Score: "+scoreToAdd);
             return scoreToAdd;
         } else {
             return 0;

@@ -1,4 +1,9 @@
-/// @author Kemal Sogut - 101280677
+/**
+ * Initializes the Tile Bag and Tiles in it.
+ * @author Kemal Sogut - 101280677
+ *
+ *
+  */
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -48,20 +53,6 @@ public class TileBag {
         }
 
     }
-
-        /*
- function to test drawn tile. Prints letter and number of left of the same letter in the bag.
-    public void checkDraw(char letter){
-        int count = 0;
-        for(int i=0;i<tiles.size();i++){
-            if (tiles.get(i).getLetter()==letter){
-                count++;
-            }
-
-        }
-        System.out.println("\nLeft: " + count);
-    }
-*/
 
     public int getNumberOfTilesLeft() {
         return tiles.size();

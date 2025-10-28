@@ -1,3 +1,11 @@
+/**
+ * Runs the *Scrabble*  game on the board given.
+ *
+ * @author Kemal Sogut - 101280677
+ * @param board : the game board object.
+ *
+*/
+
 import java.util.*;
 
 public class Game {
@@ -29,15 +37,16 @@ public class Game {
             if(isGameOver){
                 break;
             }
-
             takeTurn(playersList.get(currentPlayer), tileBag, board, scanner);
 
             if(currentPlayer<playersList.size()-1){
                 currentPlayer++;
             }
             else{
-                isGameOver=true;
                 currentPlayer=0;
+            }
+            if(tileBag.getNumberOfTilesLeft()==0){
+                isGameOver = true;
             }
         }
     }
@@ -67,7 +76,7 @@ public class Game {
         }
     }
     public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
-        System.out.print("Player: "+player.getName());
+        System.out.print("\nPlayer: "+player.getName()+"\n");
         Move move = new Move(player, tileBag, board, scanner);
 
         move.makeMove(player,tileBag,board,scanner);

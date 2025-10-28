@@ -1,4 +1,11 @@
-/// @author Kemal Sogut - 101280677
+/**
+ *
+ *
+ * @author Kemal Sogut - 101280677
+ *
+ * Represents a Letter Tile in the game.
+ *
+ */
 
 public class Tile {
 
