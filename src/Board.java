@@ -1,11 +1,6 @@
 /// @author Kemal Sogut - 101280677
 /**
  * Represents a game board composed of a 15x15 grid of {@link Cell} objects.
- *
- * <p>This class is designed to manage the placement and retrieval of {@link Tile} objects
- * within a two-dimensional array of cells. It provides basic operations such as setting,
- * clearing, and checking cells, as well as printing the board for debugging or visualization
- * purposes.</p>
  */
 public class Board {
 
