@@ -1,4 +1,9 @@
-/// @author Kemal Sogut - 101280677
+/**
+ * Initializes the Tile Bag and Tiles in it.
+ * @author Kemal Sogut - 101280677
+ *
+ *
+  */
 
 import java.util.ArrayList;
 import java.util.Random;
