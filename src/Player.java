@@ -54,6 +54,9 @@ public class Player {
 
     }
 
+    public void removeTiles(int i) {
+        rack.remove(i);
+    }
 
     public void printRack(){
     for(int i=0;i<rack.size();i++){
