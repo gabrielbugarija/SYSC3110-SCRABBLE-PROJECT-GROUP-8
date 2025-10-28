@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.*;
 
 public class Player {
-    //player class
+
     private String name;
     private int score;
     private ArrayList<Tile> rack;
@@ -32,26 +32,18 @@ public class Player {
             rack.add(tileBag.drawTile());
 
         }
+
     }
 
 
+    public void removeTiles(List<Tile> tiles) {
+        if (tiles != null) {
+            this.rack.removeAll(tiles);
+        }
 
-    public void drawTiles(){
-
-        while (rack.size()<7){
+        while (rack.size() < 7) {
             rack.add(tileBag.drawTile());
         }
-
-    }
-
-    public void removeTiles(char c) {
-
-        for(int i=0;i<rack.size();i++){
-            if(rack.get(i).getLetter()==c){
-                rack.remove(i);
-            }
-        }
-
     }
 
 
@@ -77,8 +69,4 @@ public class Player {
         return "\nPlayer Name: "+ this.name + " Score: "+this.score +" \n";
     }
 
-    public ArrayList<Tile> getRack() {
-
-        return this.rack;
     }
-}
