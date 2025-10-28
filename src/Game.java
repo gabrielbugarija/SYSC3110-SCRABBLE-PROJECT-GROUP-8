@@ -29,15 +29,16 @@ public class Game {
             if(isGameOver){
                 break;
             }
-
             takeTurn(playersList.get(currentPlayer), tileBag, board, scanner);
 
             if(currentPlayer<playersList.size()-1){
                 currentPlayer++;
             }
             else{
-                isGameOver=true;
                 currentPlayer=0;
+            }
+            if(tileBag.getNumberOfTilesLeft()==0){
+                isGameOver = true;
             }
         }
     }
