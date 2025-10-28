@@ -1,3 +1,12 @@
+/**
+ * @author Kemal Sogut - 101280677
+ *
+ * @param name The player name
+ * @param tileBag The tile bag used in the game.
+ *
+ */
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
@@ -34,8 +43,6 @@ public class Player {
         }
     }
 
-
-
     public void drawTiles(){
 
         while (rack.size()<7){
@@ -52,6 +59,10 @@ public class Player {
             }
         }
 
+    }
+
+    public void removeTiles(int i) {
+        rack.remove(i);
     }
 
 
