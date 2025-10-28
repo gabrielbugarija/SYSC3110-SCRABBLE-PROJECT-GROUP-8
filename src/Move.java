@@ -321,10 +321,9 @@ public class Move {
             scoreToAdd = 10; //random value for testing;
         }
 
-        // dictionary.isValidWord(word.toString())
-        System.out.print("Word: "+ word.toString());
-        System.out.print("Score: "+scoreToAdd);
-        if(true) {
+        if(dictionary.isValidWord(word.toString())) {
+            System.out.print("Word: "+ word.toString());
+            System.out.print("Score: "+scoreToAdd);
             return scoreToAdd;
         } else {
             return 0;
