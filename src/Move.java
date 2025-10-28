@@ -48,24 +48,59 @@ public class Move {
                     setColumn.clear();
                     tilesToPlace.clear();
 
-                    System.out.print("Enter how many tile(s) you want to place (1-7)");
-                    int numberOfTilesToPlace = scanner.nextInt();
-                    scanner.nextLine();  // Consuming "Enter" line
+                    int numberOfTilesToPlace;
 
-                    for (int i = 0; i < numberOfTilesToPlace; i++) {
-                        System.out.print("Please enter tile " + (i + 1) + " (index 0-6): ");
-                        int tileIndexToPlace = scanner.nextInt();
+                    while (true) {
+                        System.out.print("Enter how many tile(s) you want to place (1-7)");
+                        numberOfTilesToPlace = scanner.nextInt();
                         scanner.nextLine();  // Consuming "Enter" line
 
+                        if (numberOfTilesToPlace>1 && numberOfTilesToPlace<8){
+                            break;
+                        }
+                        System.out.print("Invalid entry. Please try again\n");
+                    }
+                    for (int i = 0; i < numberOfTilesToPlace; i++) {
+                        int tileIndexToPlace;
+                        while (true) {
+                            System.out.print("Please enter tile " + (i + 1) + " (index 0-6): ");
+                            tileIndexToPlace = scanner.nextInt();
+                            scanner.nextLine();  // Consuming "Enter" line
+
+                            if (tileIndexToPlace>1 && tileIndexToPlace<7){
+                                break;
+                            }
+                            System.out.print("Invalid entry. Please try again\n");
+                        }
                         tilesToPlace.add(player.getRack().get(tileIndexToPlace));
+                        int row;
+                        int col;
+                        while (true) {
+                            System.out.print("Please enter row position for tile " + (i + 1) + " (index 0-14): ");
+                            row = scanner.nextInt();
+                            scanner.nextLine();// Consuming "Enter" line
+                            if (row>=0 && row<15){
+                                break;
+                            }
+                            System.out.print("Invalid entry. Please try again\n");
+                        }
 
-                        System.out.print("Please enter row position for tile " + (i + 1) + " (index 0-14): ");
-                        setRow.add(scanner.nextInt());
-                        scanner.nextLine(); // Consuming "Enter" line
+                            setRow.add(row);
 
-                        System.out.print("Please enter column position for tile " + (i + 1) + " (index 0-14): ");
-                        setColumn.add(scanner.nextInt());
-                        scanner.nextLine(); // Consuming "Enter" line
+
+                        while (true) {
+                            System.out.print("Please enter column position for tile " + (i + 1) + " (index 0-14): ");
+                            col = scanner.nextInt();
+                            scanner.nextLine(); // Consuming "Enter" line
+
+                            if (col>=0 && col<15){
+                                break;
+                            }
+                            System.out.print("Invalid entry. Please try again\n");
+
+                        }
+                        setColumn.add(col);
+
                     }
                     direction = checkDirection(setRow, setColumn);
                 }
