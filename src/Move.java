@@ -131,7 +131,7 @@ public class Move {
 
             }
 
-            player.removeTiles(indexToSwap);
+            player.removeTiles((char) indexToSwap);
             player.drawTiles();
         }
         else if (action == 2) {
