@@ -75,7 +75,10 @@ public class Game {
         // Show the starting board state before the first turn
         board.printBoard();
 
+
+
         // ---- Main game loop ----
+
         while (true) {
 
             // Break out if the game is marked as over
