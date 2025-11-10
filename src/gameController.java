@@ -27,10 +27,6 @@ public class gameController implements ActionListener {
         String command = e.getActionCommand();
         System.out.println(command);
 
-
-
-
-
         // If Swap button pressed.
         if (command.equals("Swap")) {
 
@@ -40,25 +36,24 @@ public class gameController implements ActionListener {
                 swapMode = true;
                 tilesToSwap.clear();
 
-            } else if (swapMode){
+            } else {
                 System.out.println(tilesToSwap);
                 Player cp = model.getCurrentPlayer();
                 System.out.println("Swap mode exited");
                 // perform tiles swap.
                 for (Integer i: tilesToSwap){
+                    Tile tile = cp.getRack().get(i);
+                    model.getTileBag().addTile(tile);
                     cp.removeTiles(i);
                 }
                 cp.drawTiles();
-
                 model.advanceTurn();
             }
         }
 
         // If Swap button pressed.
         if (Objects.equals(command, "Pass")){
-
             model.advanceTurn();
-
         }
 
         if (command.startsWith("Tile: ")) {

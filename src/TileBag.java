@@ -49,19 +49,10 @@ public class TileBag {
 
     }
 
-        /*
- function to test drawn tile. Prints letter and number of left of the same letter in the bag.
-    public void checkDraw(char letter){
-        int count = 0;
-        for(int i=0;i<tiles.size();i++){
-            if (tiles.get(i).getLetter()==letter){
-                count++;
-            }
+    public void addTile(Tile tile) {
+            tiles.add(tile);
 
-        }
-        System.out.println("\nLeft: " + count);
     }
-*/
 
     public int getNumberOfTilesLeft() {
         return tiles.size();

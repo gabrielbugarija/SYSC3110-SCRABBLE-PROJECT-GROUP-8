@@ -123,7 +123,7 @@ public class gameFrame extends JFrame implements gameView{
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setPreferredSize(new Dimension(150, 0));
 
-        tilesLabel = new JLabel("Tiles In Bag: ", SwingConstants.CENTER);
+        tilesLabel = new JLabel("Tiles In Bag: "+model.getTileBag().getNumberOfTilesLeft(), SwingConstants.CENTER);
         tilesLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         tilesLabel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
         rightPanel.add(tilesLabel, BorderLayout.NORTH);
@@ -203,7 +203,6 @@ public class gameFrame extends JFrame implements gameView{
         }
     }
 
-
     public void refreshBoard() {
         Cell[][] b = model.getBoard();
 
@@ -235,15 +234,26 @@ public class gameFrame extends JFrame implements gameView{
         return numberOfPlayers;
     }
 
+
+
+    // Handles advancing turn to the next player. Updates labels and buttons.
     @Override
     public void handleAdvanceTurn() {
+
         Player cp = model.getCurrentPlayer();
+
+
         String text = (cp.getName() + "'s Turn");
         tilesLabelBottom.setText(text);
 
+        //Update current tile
+        tilesLabel.setText("Tiles In Bag: "+model.getTileBag().getNumberOfTilesLeft());
+
+        // Update tile rack on GUI
         for (int i = 0; i < 7; i++) {
             tileButtons[i].setText(String.valueOf(cp.getRack().get(i)));
         }
+
 
         refreshBoard();
     }
