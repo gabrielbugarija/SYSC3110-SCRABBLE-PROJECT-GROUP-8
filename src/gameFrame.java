@@ -166,7 +166,7 @@ public class gameFrame extends JFrame implements gameView{
         // Tiles panel
         tilesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tilesPanel.setBackground(Color.WHITE);
-        tilesLabelBottom = new JLabel(model.getCurrentPlayer().getName()+" 's Tiles:");
+        tilesLabelBottom = new JLabel(model.getCurrentPlayer().getName()+" 's Turn:");
         tilesLabelBottom.setFont(new Font("Arial", Font.PLAIN, 12));
         tilesPanel.add(tilesLabelBottom);
 
@@ -229,8 +229,8 @@ public class gameFrame extends JFrame implements gameView{
     // Handles advancing Turn.
     @Override
     public void handleAdvanceTurn() {
-        Player cp = model.getCurrentPlayer();
 
+        Player cp = model.getCurrentPlayer();
         // TEST SCENARIO TO TEST PLAY BUTTON.
         String text = (cp.getName() +"'s Turn");
         tilesLabelBottom.setText(text);
