@@ -136,4 +136,8 @@ public class gameModel {
             view.handleAdvanceTurn();
         }
     }
+
+    public TileBag getTileBag(){
+        return this.tileBag;
+    }
 }

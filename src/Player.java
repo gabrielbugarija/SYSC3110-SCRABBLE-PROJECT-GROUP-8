@@ -34,8 +34,6 @@ public class Player {
         }
     }
 
-
-
     public void drawTiles(){
 
         while (rack.size()<7){
