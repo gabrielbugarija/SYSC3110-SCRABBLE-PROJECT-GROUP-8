@@ -20,9 +20,13 @@ public class gameController implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         System.out.println(e.getActionCommand());
+
+        // If PLAY button pressed.
         if (Objects.equals(e.getActionCommand(), "Play")){
             model.advanceTurn();
         }
+
+
 
 
     }

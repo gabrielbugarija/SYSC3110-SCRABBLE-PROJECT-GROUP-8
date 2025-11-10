@@ -27,6 +27,8 @@ public class gameModel {
     }
 
 
+
+
     public void setNumberOfPlayers(int i){
         this.numberOfPlayers = i;
     }
@@ -69,9 +71,14 @@ public class gameModel {
     }
     
     public void advanceTurn(){
+
+        // Iterate through views to update.
         for (gameView view : views){
             view.handleAdvanceTurn();
         }
+
+        // next player index.
+        currentPlayer = (currentPlayer+1)%numberOfPlayers;
     }
 
 }

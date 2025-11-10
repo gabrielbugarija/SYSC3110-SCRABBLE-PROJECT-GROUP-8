@@ -30,6 +30,7 @@ public class gameFrame extends JFrame implements gameView{
     JPanel buttonPanel;
     JPanel tilesPanel;
     JLabel tilesLabelBottom;
+    private JButton[] tileButtons;
 
     public gameFrame() {
         model = new gameModel();
@@ -165,22 +166,25 @@ public class gameFrame extends JFrame implements gameView{
         // Tiles panel
         tilesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tilesPanel.setBackground(Color.WHITE);
-        tilesLabelBottom = new JLabel("'s Tiles:");
+        tilesLabelBottom = new JLabel(model.getCurrentPlayer().getName()+" 's Tiles:");
         tilesLabelBottom.setFont(new Font("Arial", Font.PLAIN, 12));
         tilesPanel.add(tilesLabelBottom);
 
 
         // Add tile buttons
-        for (int i=0;i<7;i++) {
-            JButton tileButton = new JButton();
-            tileButton.setPreferredSize(new Dimension(50, 40));
-            tileButton.setBackground(new Color(220, 220, 200));
-            tileButton.setFont(new Font("Arial", Font.BOLD, 10));
-            tileButton.setFocusPainted(false);
-            tileButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-            tilesPanel.add(tileButton);
-            tileButton.setActionCommand("Tile: "+i);
-            tileButton.addActionListener(gc);
+        tileButtons = new JButton[7];  // Initialize array
+
+        for (int i = 0; i < 7; i++) {
+            tileButtons[i] = new JButton();  // Store in array
+            tileButtons[i].setPreferredSize(new Dimension(50, 40));
+            tileButtons[i].setBackground(new Color(220, 220, 200));
+            tileButtons[i].setFont(new Font("Arial", Font.BOLD, 10));
+            tileButtons[i].setText(String.valueOf(model.getCurrentPlayer().getRack().get(i).getLetter()));
+            tileButtons[i].setFocusPainted(false);
+            tileButtons[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+            tilesPanel.add(tileButtons[i]);
+            tileButtons[i].setActionCommand("Tile: " + i);
+            tileButtons[i].addActionListener(gc);
         }
 
         bottomPanel.add(buttonPanel, BorderLayout.WEST);
@@ -206,22 +210,7 @@ public class gameFrame extends JFrame implements gameView{
         }
     }
 
-    public void advanceTurn(){
-
-        StringBuilder scoreText = new StringBuilder();
-        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
-            Player player = model.getPlayersList().get(i);
-            scoreText.append(player.getName()).append("'s Score: ").append(player.getScore());
-            // Add space between players (except after the last one)
-            if (i < model.getPlayersList().size() - 1) {
-                scoreText.append("   ");
-            }
-        }
-
-
-
-    }
-
+    // Initial entry dialogue.
     public int getNumberOfPlayers(){
         int numberOfPlayers = 0;
         while(true) {
@@ -240,8 +229,19 @@ public class gameFrame extends JFrame implements gameView{
     // Handles advancing Turn.
     @Override
     public void handleAdvanceTurn() {
-        String text = (model.getCurrentPlayer().getName() +"'s Turn");
-        tilesLabelBottom = new JLabel(text);
+        Player cp = model.getCurrentPlayer();
+
+        // TEST SCENARIO TO TEST PLAY BUTTON.
+        String text = (cp.getName() +"'s Turn");
+        tilesLabelBottom.setText(text);
+
+
+        for (int i=0;i<7;i++) {
+            tileButtons[i].setText(String.valueOf(cp.getRack().get(i)));
+        }
+
+
+
 
     }
 }
