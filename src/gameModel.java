@@ -116,11 +116,7 @@ public class gameModel {
     public void advanceTurn(){
         // next player index.
         currentPlayer = (currentPlayer+1)%numberOfPlayers;
-
-        // Iterate through views to update.
-        for (gameView view : views){
-            view.handleAdvanceTurn();
-        }
+        updateViews();
     }
 
     public Cell[][] getBoard() {

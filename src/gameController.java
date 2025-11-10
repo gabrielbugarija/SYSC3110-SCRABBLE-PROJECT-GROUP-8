@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -13,6 +14,8 @@ import java.util.Objects;
 
 public class gameController implements ActionListener {
 
+    private boolean swapMode = false;
+    ArrayList<Integer> tilesToSwap = new ArrayList<>();
     gameModel model;
     public gameController(gameModel model){
         this.model = model;
@@ -21,22 +24,60 @@ public class gameController implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        System.out.println(e.getActionCommand());
+        String command = e.getActionCommand();
+        System.out.println(command);
 
-        // If PLAY button pressed.
-        if (Objects.equals(e.getActionCommand(), "Swap")){
+
+
+
+
+        // If Swap button pressed.
+        if (command.equals("Swap")) {
+
+            if (!swapMode) {
+                System.out.println("Swap mode entered");
+                // Enter swap mode
+                swapMode = true;
+                tilesToSwap.clear();
+
+            } else if (swapMode){
+                System.out.println(tilesToSwap);
+                Player cp = model.getCurrentPlayer();
+                System.out.println("Swap mode exited");
+                // perform tiles swap.
+                for (Integer i: tilesToSwap){
+                    cp.removeTiles(i);
+                }
+                cp.drawTiles();
+
+                model.advanceTurn();
+            }
+        }
+
+        // If Swap button pressed.
+        if (Objects.equals(command, "Pass")){
+
             model.advanceTurn();
+
         }
 
-        if (e.getActionCommand().startsWith("Tile: ")) {
-            int idx = Integer.parseInt(e.getActionCommand().substring(6).trim());
-            model.selectTileIndex(idx);
-            System.out.println("Selected tile index: " + idx);
-            return;
-        }
+        if (command.startsWith("Tile: ")) {
+            int idx = Integer.parseInt(command.substring(6).trim());
+            if (swapMode){
+                System.out.println("Tiles to Swap: " + idx);
+                tilesToSwap.add(idx);
+                System.out.println(tilesToSwap);
+            }
+            else {
+                model.selectTileIndex(idx);
+                System.out.println("Selected tile index: " + idx);
+                return;
+            }
+            }
 
-        if (e.getActionCommand().matches("\\d+ \\d+")) {
-            String[] parts = e.getActionCommand().split(" ");
+
+        if (command.matches("\\d+ \\d+")) {
+            String[] parts = command.split(" ");
             int row = Integer.parseInt(parts[0]);
             int col = Integer.parseInt(parts[1]);
 
@@ -45,24 +86,22 @@ public class gameController implements ActionListener {
             } else {
                 System.out.println("Could not place tile.");
             }
-
-
             model.updateViews();
 
             return;
         }
 
-        if (e.getActionCommand().contains(" ")) {
-            String[] rc = e.getActionCommand().split(" ");
+        if (command.contains(" ")) {
+            if(swapMode){
+                return;
+            }
+            String[] rc = command.split(" ");
             int r = Integer.parseInt(rc[0]);
             int c = Integer.parseInt(rc[1]);
             if (model.placeSelectedTileAt(r, c)) {
             }
 
         }
-
-
-
 
 
     }
