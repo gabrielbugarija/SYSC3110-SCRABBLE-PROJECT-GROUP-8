@@ -42,6 +42,7 @@ public class Move {
             boolean isWordValid = false;
 
             while(!isWordValid) {
+                direction = -1;
 
                 while (direction == -1) {
                     setRow.clear();
@@ -55,7 +56,7 @@ public class Move {
                         numberOfTilesToPlace = scanner.nextInt();
                         scanner.nextLine();  // Consuming "Enter" line
 
-                        if (numberOfTilesToPlace>1 && numberOfTilesToPlace<8){
+                        if (numberOfTilesToPlace >= 1 && numberOfTilesToPlace <= 7){
                             break;
                         }
                         System.out.print("Invalid entry. Please try again\n");
@@ -67,7 +68,7 @@ public class Move {
                             tileIndexToPlace = scanner.nextInt();
                             scanner.nextLine();  // Consuming "Enter" line
 
-                            if (tileIndexToPlace>1 && tileIndexToPlace<7){
+                            if (tileIndexToPlace >= 0 && tileIndexToPlace <= 6){
                                 break;
                             }
                             System.out.print("Invalid entry. Please try again\n");
@@ -107,6 +108,8 @@ public class Move {
                 moveScore = checkValidityOfWordAndReturnScore(direction, tilesToPlace, setRow, setColumn, board);
                 if (moveScore == 0){
                     isWordValid = false;
+                    System.out.print("Invalid word. Please try again\n");
+                    direction = -1;
                 }
                 else{
                     isWordValid = true;
@@ -142,21 +145,21 @@ public class Move {
     public void placeTiles(Board board, int direction, ArrayList<Tile> tilesToPlace, ArrayList<Integer> rowsList, ArrayList<Integer> columnsList){
         boolean successful;
         if (direction == 0){
-            int row = rowsList.getFirst();
+            int row = rowsList.get(0);
             for (int i=0; i<tilesToPlace.size();i++){
                 board.setCell(row, columnsList.get(i), tilesToPlace.get(i));
                 successful = true;
             }
 
         } else if (direction == 1) {
-            int column = columnsList.getFirst();
+            int column = columnsList.get(0);
             for (int i=0; i<tilesToPlace.size();i++){
                 board.setCell(rowsList.get(i),column, tilesToPlace.get(i));
                 successful = true;
             }
 
         } else if (direction == 2) {
-            board.setCell(rowsList.getFirst(),columnsList.getFirst(), tilesToPlace.getFirst());
+            board.setCell(rowsList.get(0),columnsList.get(0), tilesToPlace.get(0));
             successful = true;
         }
         else {
@@ -166,10 +169,45 @@ public class Move {
 
     }
 
+    private void sortPlacementByPosition(ArrayList<Integer> rows, ArrayList<Integer> cols, ArrayList<Tile> tiles, int direction) {
+    ArrayList<Integer> order = new ArrayList<>();
+    for (int i = 0; i < tiles.size(); i++) {
+        order.add(i);
+    }
+
+    if (direction == 0) {
+        // horizontal -> sort by column
+        order.sort((a, b) -> Integer.compare(cols.get(a), cols.get(b)));
+    } else {
+        // vertical -> sort by row
+        order.sort((a, b) -> Integer.compare(rows.get(a), rows.get(b)));
+    }
+
+    ArrayList<Integer> newRows = new ArrayList<>();
+    ArrayList<Integer> newCols = new ArrayList<>();
+    ArrayList<Tile> newTiles = new ArrayList<>();
+
+    for (int index : order) {
+        newRows.add(rows.get(index));
+        newCols.add(cols.get(index));
+        newTiles.add(tiles.get(index));
+    }
+
+    rows.clear();
+    cols.clear();
+    tiles.clear();
+    rows.addAll(newRows);
+    cols.addAll(newCols);
+    tiles.addAll(newTiles);
+}
+
+
 
     private int checkValidityOfWordAndReturnScore(int direction, ArrayList<Tile> tilesToPlace, ArrayList<Integer> setRow, ArrayList<Integer> setCol, Board board) {
         Dictionary dictionary = new Dictionary();
         StringBuilder word = new StringBuilder();
+        sortPlacementByPosition(setRow, setCol, tilesToPlace, direction);
+
         int scoreToAdd = 0 ;
 
         for (int i = 0; i < tilesToPlace.size(); i++) {
@@ -184,7 +222,7 @@ public class Move {
             Cell cell;
 
             while(upper>0 && !foundNull){
-                cell = board.getCell(upper-1,setCol.getFirst());
+                cell = board.getCell(upper-1,setCol.get(0));
                 if(!cell.isEmpty()){
                     word.insert(0, cell.getLetter());
                     scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
@@ -196,7 +234,7 @@ public class Move {
             }
 
             while(lower<14 && !foundNull){
-                cell = board.getCell(lower+1,setCol.getFirst());
+                cell = board.getCell(lower+1,setCol.get(0));
                 if(!cell.isEmpty()){
                     word.append(cell.getLetter());
                     scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
@@ -214,7 +252,7 @@ public class Move {
             Cell cell;
 
             while(left>0 && !foundNull){
-                cell = board.getCell(setRow.getFirst(),left-1);
+                cell = board.getCell(setRow.get(0),left-1);
                 if(!cell.isEmpty()){
                     word.insert(0, cell.getLetter());
                     scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
@@ -227,7 +265,7 @@ public class Move {
             }
 
             while(right<14 && !foundNull){
-                cell = board.getCell(setRow.getFirst(),right+1);
+                cell = board.getCell(setRow.get(0),right+1);
                 if(!cell.isEmpty()){
                     word.append(cell.getLetter());
                     right++;
@@ -240,8 +278,8 @@ public class Move {
 
         }
         else if (direction == 2) {
-//            int row = setRow.getFirst();
-//            int col = setCol.getFirst();
+//            int row = setRow.get(0);
+//            int col = setCol.get(0);
 //            StringBuilder horizontalWord = new StringBuilder();
 //            StringBuilder verticalWord = new StringBuilder();
 //
@@ -298,7 +336,7 @@ public class Move {
 //            i = col;
 //
 //            while(i<14 && !foundNull){
-//                cell = board.getCell(rowsList.getFirst(),i+1);
+//                cell = board.getCell(rowsList.get(0),i+1);
 //                if(!cell.isEmpty()){
 //                    verticalWord.append(cell.getLetter());
 //                    i++;
@@ -329,33 +367,42 @@ public class Move {
 
     public int checkDirection(ArrayList<Integer> setRow, ArrayList<Integer> setColumn){
 
-        if(areAllElementsSame(setRow) && !areAllElementsSame(setColumn)){
-            return 0;
-        } else if (areAllElementsSame(setColumn) && !areAllElementsSame(setRow)) {
-            return 1;
-
-        } else if (areAllElementsSame(setRow) && areAllElementsSame(setColumn)){
-            return 2;
-        }
-        else{
+        if (setRow.isEmpty() || setColumn.isEmpty()) {
             System.out.print("Invalid direction: ");
             return -1;
         }
 
+        boolean sameRow = allSame(setRow);
+        boolean sameColumn = allSame(setColumn);
+
+        if (sameRow && !sameColumn) {
+            return 0;
+        } else if (sameColumn && !sameRow) {
+            return 1;
+        } else if (sameRow && sameColumn) {
+            if (setRow.size() == 1) {
+                return 2;
+            }
+            System.out.print("Invalid direction: ");
+            return -1;
+        }
+
+        System.out.print("Invalid direction: ");
+        return -1;
     }
 
-    public static <T> boolean areAllElementsSame(List<T> list) {
-
-        if (list == null || list.isEmpty() || list.size() == 1) {
+    private static boolean allSame(List<Integer> values) {
+        if (values.isEmpty()) {
             return true;
         }
 
-        // Get the first element to compare against
-        T firstElement = list.getFirst();
-
-        // The allMatch() method returns true if every element in the stream
-        // matches the provided condition.
-        return list.stream().allMatch(element -> element.equals(firstElement));
+        int first = values.get(0);
+        for (int i = 1; i < values.size(); i++) {
+            if (values.get(i) != first) {
+                return false;
+            }
+        }
+        return true;
     }
     
 
