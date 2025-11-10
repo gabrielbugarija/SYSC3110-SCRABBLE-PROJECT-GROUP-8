@@ -13,7 +13,6 @@ import java.util.Scanner;
 
 public class gameFrame extends JFrame implements gameView{
 
-
     private Cell[][] board;
     private boolean empty;
     private static final int BOARD_SIZE = 15;
@@ -31,6 +30,7 @@ public class gameFrame extends JFrame implements gameView{
     JPanel tilesPanel;
     JLabel tilesLabelBottom;
     private JButton[] tileButtons;
+    private JButton[][] boardButtons = new JButton[15][15];
 
     public gameFrame() {
         model = new gameModel();
@@ -38,15 +38,14 @@ public class gameFrame extends JFrame implements gameView{
         ArrayList<String> names = new ArrayList<>();
 
         for (int i = 0; i < model.getNumberOfPlayers(); i++) {
-
-            String input = JOptionPane.showInputDialog("Enter name for player "+(i+1)+" :");
+            String input = JOptionPane.showInputDialog("Enter name for player " + (i + 1) + " :");
             names.add(input);
         }
         model.setPlayersList(names);
 
         this.board = new Cell[15][15];
         initBoard();
-        this.empty=true;
+        this.empty = true;
 
         setTitle("Scrabble Board");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,7 +59,6 @@ public class gameFrame extends JFrame implements gameView{
         mainPanel.setBackground(Color.WHITE);
 
         // Top score panel
-
         scorePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         scorePanel.setBackground(new Color(64, 64, 64));
 
@@ -68,8 +66,6 @@ public class gameFrame extends JFrame implements gameView{
         for (int i = 0; i < model.getNumberOfPlayers(); i++) {
             Player player = model.getPlayersList().get(i);
             scoreText.append(player.getName()).append("'s Score: ").append(player.getScore());
-
-            // Add space between players (except after the last one)
             if (i < model.getPlayersList().size() - 1) {
                 scoreText.append("   ");
             }
@@ -80,10 +76,10 @@ public class gameFrame extends JFrame implements gameView{
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
         scorePanel.add(scoreLabel);
 
-
         // Board panel with grid
         boardPanel = new JPanel(new GridLayout(BOARD_SIZE + 1, BOARD_SIZE + 1));
         boardPanel.setBackground(Color.BLACK);
+
 
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
@@ -92,10 +88,8 @@ public class gameFrame extends JFrame implements gameView{
                 cell.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
                 if (row == 0 && col == 0) {
-                    // Top-left corner
                     cell.setBackground(new Color(64, 64, 64));
                 } else if (row == 0) {
-                    // Column headers
                     cell.setBackground(new Color(96, 96, 96));
                     JLabel label = new JLabel(String.valueOf(col), SwingConstants.CENTER);
                     label.setForeground(Color.WHITE);
@@ -103,7 +97,6 @@ public class gameFrame extends JFrame implements gameView{
                     cell.setLayout(new BorderLayout());
                     cell.add(label, BorderLayout.CENTER);
                 } else if (col == 0) {
-                    // Row headers
                     cell.setBackground(new Color(96, 96, 96));
                     JLabel label = new JLabel(String.valueOf(row), SwingConstants.CENTER);
                     label.setForeground(Color.WHITE);
@@ -111,21 +104,24 @@ public class gameFrame extends JFrame implements gameView{
                     cell.setLayout(new BorderLayout());
                     cell.add(label, BorderLayout.CENTER);
                 } else {
-                    // Game cells
                     cell.setBackground(Color.WHITE);
-                    cell.add(new JLabel(String.valueOf(board[row][col].getLetter())));
+                    cell.setLayout(new BorderLayout());
+                    cell.add(new JLabel(String.valueOf(board[row][col].getLetter()), SwingConstants.CENTER),
+                            BorderLayout.CENTER);
                     cell.addActionListener(gc);
-                    cell.setActionCommand(String.valueOf(row+" "+ col));
+                    cell.setActionCommand(row + " " + col);
                 }
+
+                boardButtons[row][col] = cell;
                 boardPanel.add(cell);
             }
         }
+
 
         // Right info panel
         rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setPreferredSize(new Dimension(150, 0));
-
 
         tilesLabel = new JLabel("Tiles In Bag: ", SwingConstants.CENTER);
         tilesLabel.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -146,7 +142,6 @@ public class gameFrame extends JFrame implements gameView{
         playButton.setFocusPainted(false);
         playButton.addActionListener(gc);
 
-
         JButton swapButton = new JButton("Swap");
         swapButton.setBackground(Color.YELLOW);
         swapButton.setForeground(Color.BLACK);
@@ -166,16 +161,14 @@ public class gameFrame extends JFrame implements gameView{
         // Tiles panel
         tilesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tilesPanel.setBackground(Color.WHITE);
-        tilesLabelBottom = new JLabel(model.getCurrentPlayer().getName()+" 's Turn:");
+        tilesLabelBottom = new JLabel(model.getCurrentPlayer().getName() + " 's Tiles:");
         tilesLabelBottom.setFont(new Font("Arial", Font.PLAIN, 12));
         tilesPanel.add(tilesLabelBottom);
 
-
         // Add tile buttons
-        tileButtons = new JButton[7];  // Initialize array
-
+        tileButtons = new JButton[7];
         for (int i = 0; i < 7; i++) {
-            tileButtons[i] = new JButton();  // Store in array
+            tileButtons[i] = new JButton();
             tileButtons[i].setPreferredSize(new Dimension(50, 40));
             tileButtons[i].setBackground(new Color(220, 220, 200));
             tileButtons[i].setFont(new Font("Arial", Font.BOLD, 10));
@@ -202,46 +195,56 @@ public class gameFrame extends JFrame implements gameView{
         this.setVisible(true);
     }
 
-    private void initBoard(){
-        for(int i=0; i < board.length; i++) {
-            for (int j = 0; j< board[i].length; j++){
+    private void initBoard() {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
                 board[i][j] = new Cell();
             }
         }
     }
 
-    // Initial entry dialogue.
-    public int getNumberOfPlayers(){
-        int numberOfPlayers = 0;
-        while(true) {
-            numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Enter number of Players:"));
-            if(numberOfPlayers<=4 && numberOfPlayers>=2){
-                break;
+
+    public void refreshBoard() {
+        Cell[][] b = model.getBoard();
+
+        for (int r = 1; r < 15; r++) {
+            for (int c = 1; c < 15; c++) {
+                JButton btn = boardButtons[r][c];
+                if (btn.getComponentCount() > 0 && btn.getComponent(0) instanceof JLabel) {
+                    JLabel lbl = (JLabel) btn.getComponent(0);
+                    char ch = b[r][c].isEmpty() ? '-' : b[r][c].getLetter();
+                    lbl.setText(String.valueOf(ch));
+                }
             }
-            else{
+        }
+        boardPanel.revalidate();
+        boardPanel.repaint();
+    }
+
+    // Initial entry dialogue.
+    public int getNumberOfPlayers() {
+        int numberOfPlayers = 0;
+        while (true) {
+            numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Enter number of Players:"));
+            if (numberOfPlayers <= 4 && numberOfPlayers >= 2) {
+                break;
+            } else {
                 System.out.println("The number of player should be between 2 and 4");
             }
         }
         return numberOfPlayers;
     }
 
-
-    // Handles advancing Turn.
     @Override
     public void handleAdvanceTurn() {
-
         Player cp = model.getCurrentPlayer();
-        // TEST SCENARIO TO TEST PLAY BUTTON.
-        String text = (cp.getName() +"'s Turn");
+        String text = (cp.getName() + "'s Turn");
         tilesLabelBottom.setText(text);
 
-
-        for (int i=0;i<7;i++) {
+        for (int i = 0; i < 7; i++) {
             tileButtons[i].setText(String.valueOf(cp.getRack().get(i)));
         }
 
-
-
-
+        refreshBoard();
     }
 }
