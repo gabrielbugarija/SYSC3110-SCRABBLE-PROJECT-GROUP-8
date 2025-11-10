@@ -164,12 +164,13 @@ public class Game {
      * @param board    the shared game board
      * @param scanner  scanner for user interaction during the move
      */
-    public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
-        System.out.print("Player: " + player.getName());
-        Move move = new Move(player, tileBag, board, scanner);
+   // Game.java
+public void takeTurn(Player player, TileBag tileBag, Board board, Scanner scanner) {
+    System.out.print("Player: " + player.getName());
+    Move move = new Move(player, tileBag, board, scanner);
+    move.makeMove(player, tileBag, board, scanner);
 
-        // Let the Move object drive the turn. You could eventually check here if the move
-        // ended the game (e.g. player plays all tiles and bag is empty).
-        move.makeMove(player, tileBag, board, scanner);
-    }
+
+}
+
 }

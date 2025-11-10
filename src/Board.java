@@ -83,4 +83,31 @@ public class Board {
             }
         }
     }
+
+ 
+
+public boolean isCellEmpty(int r, int c) {
+    return board[r][c].isEmpty();
+}
+
+public boolean placeIfEmpty(int r, int c, Tile t) {
+    if (!isCellEmpty(r, c)) return false;
+    board[r][c].setTile(t);
+    empty = false;
+    return true;
+}
+
+/** Returns true if any 4-neighbour of (r,c) contains a tile. */
+public boolean hasAdjacentTile(int r, int c) {
+    int[] dr = {-1, 1, 0, 0};
+    int[] dc = {0, 0, -1, 1};
+    for (int k = 0; k < 4; k++) {
+        int nr = r + dr[k], nc = c + dc[k];
+        if (0 <= nr && nr < 15 && 0 <= nc && nc < 15 && !board[nr][nc].isEmpty()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 }
