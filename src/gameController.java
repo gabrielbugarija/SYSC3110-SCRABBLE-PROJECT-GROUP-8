@@ -78,6 +78,7 @@ public class gameController implements ActionListener {
 
             if (model.placeSelectedTileAt(row, col)) {
                 System.out.println("Placed tile on board.");
+                model.updateViews();
             } else {
                 System.out.println("Could not place tile.");
             }

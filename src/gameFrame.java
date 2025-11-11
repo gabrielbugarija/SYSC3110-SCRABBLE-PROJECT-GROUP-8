@@ -234,8 +234,21 @@ public class gameFrame extends JFrame implements gameView{
         return numberOfPlayers;
     }
 
+    public void updateScoreDisplay() {
+        StringBuilder score = new StringBuilder();
+        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
+            Player player = model.getCurrentPlayer();
+            score.append(player.getName()).append("'s Score: ").append(player.getScore());
 
+            if (i < model.getNumberOfPlayers() - 1) {
+                score.append(", ");
+            }
+        }
+        scoreLabel.setText(score.toString());
 
+        scorePanel.revalidate();
+        scorePanel.repaint();
+    }
     // Handles advancing turn to the next player. Updates labels and buttons.
     @Override
     public void handleAdvanceTurn() {
@@ -254,7 +267,7 @@ public class gameFrame extends JFrame implements gameView{
             tileButtons[i].setText(String.valueOf(cp.getRack().get(i)));
         }
 
-
+        updateScoreDisplay();
         refreshBoard();
     }
 }

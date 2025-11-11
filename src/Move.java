@@ -19,7 +19,7 @@ public class Move {
     public void makeMove(Player player, TileBag tileBag, Board board, Scanner scanner){
         player.printRack();
         int action;
-        int moveScore;
+        int moveScore = 0;
         int direction = -1;
         ArrayList<Integer> setRow = new ArrayList<>();
         ArrayList<Integer> setColumn = new ArrayList<>();
@@ -114,6 +114,10 @@ public class Move {
                 else{
                     isWordValid = true;
                     placeTiles(board, direction, tilesToPlace, setRow, setColumn);
+
+                    player.addScore(moveScore);
+                    System.out.println("Move successful! Score: " + moveScore);
+
                     board.printBoard();
                 }
 
