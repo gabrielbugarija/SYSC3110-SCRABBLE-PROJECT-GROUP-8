@@ -46,6 +46,7 @@ public class gameController implements ActionListener {
                     model.getTileBag().addTile(tile);
                     cp.removeTiles(i);
                 }
+                swapMode = false;
                 cp.drawTiles();
                 model.advanceTurn();
             }
