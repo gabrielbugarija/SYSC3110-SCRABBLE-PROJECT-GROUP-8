@@ -216,8 +216,11 @@ public class gameFrame extends JFrame implements gameView{
                 }
             }
         }
+
+
         boardPanel.revalidate();
         boardPanel.repaint();
+        updateScoreDisplay();
     }
 
     // Initial entry dialogue.
@@ -269,7 +272,6 @@ public class gameFrame extends JFrame implements gameView{
             tileButtons[i].setText(String.valueOf(cp.getRack().get(i)));
         }
 
-        updateScoreDisplay();
         refreshBoard();
     }
 }

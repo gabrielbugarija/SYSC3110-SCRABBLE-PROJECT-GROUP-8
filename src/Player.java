@@ -34,6 +34,7 @@ public class Player {
         }
     }
 
+
     public void drawTiles(){
 
         while (rack.size()<7){
@@ -85,5 +86,10 @@ public class Player {
     public ArrayList<Tile> getRack() {
 
         return this.rack;
+    }
+
+    public void addTileToRack(Tile tile) {
+
+        rack.add(tile);
     }
 }

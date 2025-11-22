@@ -19,9 +19,11 @@ public class gameModel {
     public int currentPlayer = 0;
     private Cell[][] board = new Cell[15][15];
     private int selectedRackIndex = -1;
+    private boolean isFirstMoveDone;
 
 
     public gameModel(){
+        isFirstMoveDone = false;
         views = new ArrayList<>();
         // Initialize board in constructor
         for (int r = 0; r < 15; r++) {
@@ -29,6 +31,14 @@ public class gameModel {
                 board[r][c] = new Cell();
             }
         }
+    }
+
+    public void setFirstMoveDone(){
+        this.isFirstMoveDone = true;
+    }
+
+    public boolean isFirstMoveDone(){
+        return isFirstMoveDone;
     }
 
     public Player getCurrentPlayer(){
