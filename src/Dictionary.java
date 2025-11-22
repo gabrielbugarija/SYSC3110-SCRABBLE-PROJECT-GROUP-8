@@ -13,7 +13,7 @@ public class Dictionary {
 
     // Constructor that loads words from file
     public Dictionary() {
-        loadWordsFromFile("wordsList.txt");
+        loadWordsFromFile("src/wordsList");
     }
 
     // Method to return true if provided word is valid or not given the validWords set

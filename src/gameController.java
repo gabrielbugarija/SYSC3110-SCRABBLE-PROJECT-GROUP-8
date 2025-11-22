@@ -111,6 +111,9 @@ public class gameController implements ActionListener {
 
 
         if (command.matches("\\d+ \\d+")) {
+            if(swapMode){
+                return;
+            }
             String[] parts = command.split(" ");
             int row = Integer.parseInt(parts[0]);
             int col = Integer.parseInt(parts[1]);
@@ -415,8 +418,8 @@ public class gameController implements ActionListener {
         // TODO: Implement dictionary check
         // For now, return true for testing
         // You should check against a dictionary file or data structure
-        //return model.getDictionary().isValidWord(word.toUpperCase());
-        return true;
+        return model.getDictionary().isValidWord(word.toUpperCase());
+
     }
 
     /**

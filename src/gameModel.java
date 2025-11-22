@@ -20,11 +20,13 @@ public class gameModel {
     private Cell[][] board = new Cell[15][15];
     private int selectedRackIndex = -1;
     private boolean isFirstMoveDone;
+    private Dictionary dictionary;
 
 
     public gameModel(){
         isFirstMoveDone = false;
         views = new ArrayList<>();
+        dictionary = new Dictionary();
         // Initialize board in constructor
         for (int r = 0; r < 15; r++) {
             for (int c = 0; c < 15; c++) {
@@ -150,4 +152,9 @@ public class gameModel {
     public TileBag getTileBag(){
         return this.tileBag;
     }
+
+    public Dictionary getDictionary() {
+        return dictionary;
+    }
+
 }
