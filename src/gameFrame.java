@@ -236,8 +236,10 @@ public class gameFrame extends JFrame implements gameView{
 
     public void updateScoreDisplay() {
         StringBuilder score = new StringBuilder();
+
         for (int i = 0; i < model.getNumberOfPlayers(); i++) {
-            Player player = model.getCurrentPlayer();
+
+            Player player = model.getPlayersList().get(i); // Fix score table error.
             score.append(player.getName()).append("'s Score: ").append(player.getScore());
 
             if (i < model.getNumberOfPlayers() - 1) {
