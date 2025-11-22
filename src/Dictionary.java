@@ -1,51 +1,47 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 //Gabriel Bugarija 101262776
 public class Dictionary {
 
-private final Set<String> validWords =  new HashSet<>(Set.of("ability", "absorb", "abstract", "academy", "access",
-        "balance", "balloon", "barrier", "basic", "battery",
-        "calculate", "camera", "campus", "capacity", "capital",
-        "damage", "danger", "deadline", "decade", "decision",
-        "eager", "early", "earth", "economy", "edition",
-        "fabric", "factor", "fail", "family", "fashion",
-        "galaxy", "gain", "gallery", "garden", "gather",
-        "habit", "half", "handle", "happy", "health",
-        "idea", "identify", "ignore", "image", "impact",
-        "jacket", "jail", "jam", "jealous", "jewel",
-        "keen", "keep", "kernel", "kid", "kingdom",
-        "label", "labor", "lady", "lake", "language",
-        "machine", "magazine", "magic", "maintain", "market",
-        "name", "nation", "native", "natural", "network",
-        "object", "observe", "obtain", "ocean", "office",
-        "package", "page", "pain", "paint", "parent",
-        "quality", "quantity", "quarter", "queen", "query",
-        "race", "radio", "rain", "raise", "range",
-        "safe", "salary", "sample", "scene", "school","set",
-        "table", "tackle", "talent", "talk", "target",
-        "unable", "uncle", "under", "uniform", "unique",
-        "vacant", "valid", "value", "variety", "vehicle",
-        "wage", "wait", "walk", "wall", "water",
-        "x-ray", "xenon", "xerox", "xylem", "xylophone",
-        "yacht", "yard", "year", "yellow", "young",
-        "zebra", "zenith", "zero", "zone", "zodiac"));
 
-// Constructor for file pathways(Later milestones)
+    private final Set<String> validWords = new HashSet<>();
+
+
+    // Constructor that loads words from file
     public Dictionary() {
-
+        loadWordsFromFile("wordsList.txt");
     }
 
-// Method to return true if provided word is valid or not given the validWords set
-public boolean isValidWord(String word) {
-    return validWords.contains(word);
-}
+    // Method to return true if provided word is valid or not given the validWords set
+    public boolean isValidWord(String word) {
+        return validWords.contains(word.toLowerCase());
+    }
 
-//  Getter method for all valid words
-public Set<String> getValidWords() {
-    return validWords;
-}
+    //  Getter method for all valid words
+    public Set<String> getValidWords() {
+        return validWords;
+    }
 
+    // Method to load words from the text file
+    private void loadWordsFromFile(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Trim whitespace and convert to lowercase for consistency
+                String word = line.trim().toLowerCase();
+                if (!word.isEmpty()) {
+                    validWords.add(word);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading dictionary file: " + e.getMessage());
+            // Optionally, you could initialize with the hardcoded words as fallback
+        }
+    }
 
 
 }
