@@ -1,4 +1,10 @@
-/// @author Kemal Sogut - 101280677
+/**
+ *
+ * Represents a single cell on the game board.
+ * @author Kemal Sogut - 101280677
+ * @param multiplier the multiplier of tha cell.
+ *
+ */
 
 public class Cell  {
     private int multiplier;
@@ -7,6 +13,7 @@ public class Cell  {
 
     public Cell(){
         this.multiplier = 1;
+        this.empty=true;
     }
 
 
@@ -35,7 +42,15 @@ public class Cell  {
         setOccupied();
     }
 
-    public int getTileMultiplier(){
+
+
+
+    public Tile getTile() {
+        return tile;
+    }
+
+
+    public int getTilePoints(){
 
         return tile.getPoints();
     }
@@ -49,6 +64,7 @@ public class Cell  {
     }
 
     public void setEmpty() {
+        this.tile=null;
         this.empty = true;
     }
 

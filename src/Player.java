@@ -1,19 +1,20 @@
-/// @author Kemal Sogut - 101280677
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 public class Player {
-
+    //player class
     private String name;
-    private int totalScore;
+    private int score;
     private ArrayList<Tile> rack;
+    private TileBag tileBag = new TileBag();
 
-
-    public Player(String name){
+    public Player(String name, TileBag tileBag){
         this.name = name;
-        this.totalScore = 0;
+        this.score = 0;
         this.rack = new ArrayList<>();
+        this.tileBag = tileBag;
+        initTiles(tileBag);
     }
 
     public String getName(){
@@ -24,35 +25,42 @@ public class Player {
         return this.rack;
     }
 
-    public int getScore(){
-        return this.totalScore;
-    }
+    private void initTiles(TileBag tileBag) {
 
-    public void increaseScore(int points){
-        this.totalScore += points;
-    }
+        for(int i=0; i<7;i++){
+            assert rack != null;
+            rack.add(tileBag.drawTile());
 
-    public void addTiles(List<Tile> tiles) {
-        if (tiles != null) {
-            this.rack.addAll(tiles);
         }
     }
 
-    public void removeTiles(List<Tile> tiles) {
-        if (tiles != null) {
-            this.rack.removeAll(tiles);
+    public void drawTiles(){
+
+        while (rack.size()<7){
+            rack.add(tileBag.drawTile());
         }
+
     }
 
-    public boolean ownsTile(String word, List<PlacedTile> placements){
+    public void removeTiles(char c) {
+
+        for(int i=0;i<rack.size();i++){
+            if(rack.get(i).getLetter()==c){
+                rack.remove(i);
+            }
+        }
 
     }
 
-    public void fillRack(TileBag tileBag){
-        int neededTiles = 7 - rack.size();
-        if(neededTiles > 0){
-            drawTiles(tileBag, neededTiles);
-        }
+    public void removeTiles(int i) {
+        rack.remove(i);
+    }
+
+    public void printRack(){
+    for(int i=0;i<rack.size();i++){
+        Tile tile = rack.get(i);
+        System.out.println(tile.getLetter()+": "+tile.getPoints());
+    }
     }
 
     private void drawTiles(TileBag tileBag, int neededTiles) {
@@ -61,15 +69,21 @@ public class Player {
         }
     }
 
-    public void printPlayerTiles(){
-        for(int i = 0; i< rack.size(); i++){
-            Tile tile = rack.get(i);
-            System.out.println(tile.getLetter()+": "+tile.getPoints());
+    public int getScore(){
+        return score;
         }
+
+    public void addScore(int score){
+        this.score += score;
     }
 
     @Override
     public String toString() {
-        return "\nPlayer Name: "+ this.name + " Score: "+this.totalScore +" \n";
+        return "\nPlayer Name: "+ this.name + " Score: "+this.score +" \n";
+    }
+
+    public ArrayList<Tile> getRack() {
+
+        return this.rack;
     }
 }
