@@ -44,9 +44,16 @@ public class gameController implements ActionListener {
 
             model.getCurrentPlayer().addScore(points);
             System.out.println("Move scored: " + points + " points");
-            model.advanceTurn();     // triggers view updates (and clears move)
+
+            // Move to next player (could be an AI)
+            model.advanceTurn();
+
+            // Let AI(s) play automatically if it's their turn
+            model.runAITurnsIfNeeded();
             return;
         }
+
+
 
 
         // If Swap button pressed.
@@ -69,13 +76,18 @@ public class gameController implements ActionListener {
                 cp.drawTiles();
 
                 model.advanceTurn();
+                model.runAITurnsIfNeeded();
             }
+
+
         }
 
         // If Pass button pressed.
-        if (Objects.equals(command, "Pass")){
+        if (Objects.equals(command, "Pass")) {
             model.advanceTurn();
+            model.runAITurnsIfNeeded();
         }
+
 
         if (command.startsWith("Tile: ")) {
             int idx = Integer.parseInt(command.substring(6).trim());

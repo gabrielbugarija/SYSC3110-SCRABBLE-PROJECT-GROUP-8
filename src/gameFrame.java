@@ -16,7 +16,7 @@ public class gameFrame extends JFrame implements gameView {
     private static final int BOARD_SIZE = 15;   // playable cells
     private static final int CELL_SIZE  = 40;   // pixel size of each board cell
 
-    // NOTE: this local board is no longer used for logic, model's board is the truth
+    // local dummy board (logic lives in model's Board)
     private Cell[][] board = new Cell[BOARD_SIZE][BOARD_SIZE];
 
     gameModel model;
@@ -38,14 +38,21 @@ public class gameFrame extends JFrame implements gameView {
 
     public gameFrame() {
         model = new gameModel();
-        model.setNumberOfPlayers(getNumberOfPlayers());
-        ArrayList<String> names = new ArrayList<>();
 
+        // Ask for human / AI counts
+        model.setNumberOfPlayers(getNumberOfPlayers());
+        model.setNumberOfAIPlayers(getNumberOfAIPlayers());
+
+        // Ask for human player names
+        ArrayList<String> names = new ArrayList<>();
         for (int i = 0; i < model.getNumberOfPlayers(); i++) {
-            String input = JOptionPane.showInputDialog("Enter name for player " + (i + 1) + " :");
+            String input = JOptionPane.showInputDialog(
+                    "Enter name for player " + (i + 1) + " :"
+            );
             names.add(input);
         }
         model.setPlayersList(names);
+        model.setAIPlayersList();  // add AI players
 
         initBoard();
 
@@ -70,7 +77,6 @@ public class gameFrame extends JFrame implements gameView {
         scorePanel.add(scoreLabel);
 
         // ===== BOARD PANEL =====
-        // +1 row/col for headers
         boardPanel = new JPanel(new GridLayout(BOARD_SIZE + 1, BOARD_SIZE + 1));
         boardPanel.setBackground(Color.BLACK);
 
@@ -101,25 +107,28 @@ public class gameFrame extends JFrame implements gameView {
                     label.setForeground(Color.WHITE);
                     label.setFont(new Font("Arial", Font.BOLD, 12));
                     cell.add(label, BorderLayout.CENTER);
-                } else {   // real board cell
-                    cell.setLayout(new BorderLayout());
-                    Cell boardCell = model.getBoard()[row - 1][col - 1];
+                } else {
+                    // Actual playable board cell
+                    Cell boardCell = modelBoard[row - 1][col - 1];
 
+                    // Every playable cell gets a label we can update later
+                    JLabel label = new JLabel("", SwingConstants.CENTER);
+                    label.setFont(new Font("Arial", Font.BOLD, 12));
+
+                    // Initial text / colour
                     if (boardCell.getMultiplier() > 1) {
                         cell.setBackground(getCellColor(boardCell));
-                        JLabel label = new JLabel(getCellText(boardCell), SwingConstants.CENTER);
-                        label.setFont(new Font("Arial", Font.BOLD, 12));
-                        cell.add(label, BorderLayout.CENTER);
+                        label.setText(getCellText(boardCell)); // TW/DW/TL/DL when empty
                     } else {
-                        JLabel label = new JLabel(String.valueOf(boardCell.getLetter()), SwingConstants.CENTER);
-                        label.setFont(new Font("Arial", Font.BOLD, 12));
-                        cell.add(label, BorderLayout.CENTER);
+                        label.setText(""); // normal empty square
                     }
 
+                    cell.add(label, BorderLayout.CENTER);
+
+                    // Hook up to controller, using 0-based model coordinates
                     cell.addActionListener(gc);
                     cell.setActionCommand((row - 1) + " " + (col - 1));
                 }
-
 
                 boardButtons[row][col] = cell;
                 boardPanel.add(cell);
@@ -234,8 +243,10 @@ public class gameFrame extends JFrame implements gameView {
                         // There is a tile here – show tile letter (handles blanks)
                         lbl.setText(getTileDisplayText(cell));
                     } else if (cell.getMultiplier() > 1) {
+                        // Empty premium square – show its code (TW / DW / TL / DL)
                         lbl.setText(getCellText(cell));
                     } else {
+                        // Normal empty square
                         lbl.setText("");
                     }
                 }
@@ -247,24 +258,45 @@ public class gameFrame extends JFrame implements gameView {
         updateScoreDisplay();
     }
 
+    // ===== dialogs for player counts =====
+
     public int getNumberOfPlayers() {
         int numberOfPlayers;
         while (true) {
             numberOfPlayers = Integer.parseInt(
-                    JOptionPane.showInputDialog("Enter number of Players:")
+                    JOptionPane.showInputDialog("Enter number of human Players:")
             );
-            if (numberOfPlayers <= 4 && numberOfPlayers >= 2) {
+            if (numberOfPlayers >= 1 && numberOfPlayers <= 4) {
                 break;
             } else {
-                System.out.println("The number of player should be between 2 and 4");
+                System.out.println("The number of human players should be between 1 and 4");
             }
         }
         return numberOfPlayers;
     }
 
+    public int getNumberOfAIPlayers() {
+        int aiPlayers;
+        while (true) {
+            aiPlayers = Integer.parseInt(
+                    JOptionPane.showInputDialog("Enter number of AI Players (0-3):")
+            );
+            int total = aiPlayers + model.getNumberOfPlayers();
+            if (aiPlayers >= 0 && aiPlayers <= 3 && total >= 2 && total <= 4) {
+                break;
+            } else {
+                System.out.println("Total players (human + AI) must be 2 to 4, AI between 0 and 3.");
+            }
+        }
+        return aiPlayers;
+    }
+
+    // ===== score + turn UI =====
+
     private String buildScoreText() {
         StringBuilder scoreText = new StringBuilder();
-        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
+        // show scores for ALL players (human + AI)
+        for (int i = 0; i < model.getPlayersList().size(); i++) {
             Player player = model.getPlayersList().get(i);
             scoreText.append(player.getName())
                     .append("'s Score: ")

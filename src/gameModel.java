@@ -12,16 +12,20 @@ import java.util.List;
 
 public class gameModel {
 
+
     private ArrayList<Player> playersList = new ArrayList<>();
     public List<gameView> views;
-    private int numberOfPlayers;
+
+    private int numberOfPlayers;      // human players
+    private int numberOfAIPlayers;    // AI players
+
     private TileBag tileBag = new TileBag();
     public int currentPlayer = 0;
 
     // Use Board class as single source of truth (includes premium squares)
     private Board board = new Board();
 
-    // rack selection
+    // rack/tile selection
     private int selectedRackIndex = -1;
 
     // game state flags
@@ -30,6 +34,9 @@ public class gameModel {
 
     // tiles placed during the current turn: [row, col]
     private ArrayList<int[]> tilesPlacedThisTurn = new ArrayList<>();
+
+    private ArrayList<int[]> tilesPlacedLastTurn = new ArrayList<>();
+
 
     public gameModel() {
         isFirstMoveDone = false;
@@ -50,10 +57,6 @@ public class gameModel {
         return isFirstMoveDone;
     }
 
-    public Player getCurrentPlayer() {
-        return playersList.get(currentPlayer);
-    }
-
     public void setNumberOfPlayers(int i) {
         this.numberOfPlayers = i;
     }
@@ -62,11 +65,74 @@ public class gameModel {
         return this.numberOfPlayers;
     }
 
+    public void setNumberOfAIPlayers(int aiCount) {
+        this.numberOfAIPlayers = aiCount;
+    }
+
+    public int getNumberOfAIPlayers() {
+        return numberOfAIPlayers;
+    }
+
+    /** total humans + AI – used for turn rotation */
+    public int getNumberOfTotalPlayers() {
+        return numberOfPlayers + numberOfAIPlayers;
+    }
+
+    public Player getCurrentPlayer() {
+        return playersList.get(currentPlayer);
+    }
+
+    // ==== players (human + AI) ====
+
+    /** Create human players from names (called by frame). */
     public void setPlayersList(ArrayList<String> names) {
         for (int i = 0; i < numberOfPlayers; i++) {
             playersList.add(new Player(names.get(i), tileBag));
         }
     }
+
+    /** Append AI players at the end of playersList. */
+    public void setAIPlayersList() {
+        int x = 1;
+        for (int i = 0; i < numberOfAIPlayers; i++) {
+            playersList.add(new AIPlayer("AI" + x, tileBag));
+            x++;
+        }
+    }
+
+    /**
+     * If the current player is an AI, let it automatically take its turn.
+     * This will also chain through multiple AIs in a row if there are several.
+     */
+    public void runAITurnsIfNeeded() {
+        int total = getNumberOfTotalPlayers();
+        if (total <= 0) return;
+
+        // Loop in case there are multiple AIs back-to-back
+        while (getCurrentPlayer() instanceof AIPlayer) {
+            AIPlayer ai = (AIPlayer) getCurrentPlayer();
+
+            // Let AI place tiles on the board
+            boolean moved = ai.makeMove(this);
+
+            // Refresh board/racks to show the AI move
+            updateViews();
+
+            if (moved) {
+                // Score the AI's move using the same logic as human "Play"
+                int points = calculateScoreForCurrentMove();
+                if (points > 0) {
+                    ai.addScore(points);
+                }
+            }
+
+            // Move on to next player
+            currentPlayer = (currentPlayer + 1) % total;
+            tilesPlacedThisTurn.clear();
+            updateViews();
+        }
+    }
+
 
     public ArrayList<Player> getPlayersList() {
         return playersList;
@@ -77,11 +143,11 @@ public class gameModel {
     }
 
     public void endGame() {
-        // could add end-game logic here
+        // hook for end-game logic if needed
     }
 
     public void updateStatus() {
-        // could be used for console version; GUI uses views instead
+        // left for console version; GUI uses updateViews()
     }
 
     // ==== board access ====
@@ -180,12 +246,45 @@ public class gameModel {
 
     /**
      * Advance to next player's turn and notify views.
+     * Uses total (human + AI) players.
      */
     public void advanceTurn() {
-        currentPlayer = (currentPlayer + 1) % numberOfPlayers;
+        int total = getNumberOfTotalPlayers();
+        if (total <= 0) return;
+
+        // Move to the next player
+        currentPlayer = (currentPlayer + 1) % total;
         tilesPlacedThisTurn.clear();
         updateViews();
+
+        // If the next player(s) are AI, let them play automatically
+        int safety = 0; // to avoid infinite loops if all players are AI
+        while (getCurrentPlayer() instanceof AIPlayer && safety < total) {
+            safety++;
+
+            AIPlayer ai = (AIPlayer) getCurrentPlayer();
+            System.out.println("AI turn for " + ai.getName());
+
+            boolean moved = ai.makeMove(this);
+
+            // Update board/racks so GUI shows the move
+            updateViews();
+
+            if (moved) {
+                int points = calculateScoreForCurrentMove();
+                if (points > 0) {
+                    ai.addScore(points);
+                    System.out.println("AI " + ai.getName() + " scored " + points + " points.");
+                }
+            }
+
+            // Prepare for next player
+            tilesPlacedThisTurn.clear();
+            currentPlayer = (currentPlayer + 1) % total;
+            updateViews();
+        }
     }
+
 
     /**
      * Calculates the score for tiles placed in the current turn.
@@ -203,9 +302,15 @@ public class gameModel {
 
         int totalScore = 0;
 
+        // remember these positions as the "last move" before we clear them
+        tilesPlacedLastTurn.clear();
+
         for (int[] pos : tilesPlacedThisTurn) {
             int row = pos[0];
             int col = pos[1];
+
+            // store for AI
+            tilesPlacedLastTurn.add(new int[]{row, col});
 
             Cell cell = board.getCell(row, col);
             Tile tile = cell.getTile();
@@ -231,4 +336,9 @@ public class gameModel {
     public Dictionary getDictionary() {
         return dictionary;
     }
+
+    public ArrayList<int[]> getTilesPlacedLastTurn() {
+        return tilesPlacedLastTurn;
+    }
+
 }
