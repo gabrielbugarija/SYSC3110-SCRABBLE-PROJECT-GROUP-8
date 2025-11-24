@@ -289,5 +289,18 @@ public class gameFrame extends JFrame implements gameView{
         refreshBoard();
     }
 
+    @Override
+    public void handleUpdateCells() {
+        Player cp = model.getCurrentPlayer();
+        String text = (cp.getName() + "'s Turn");
+        tilesLabelBottom.setText(text);
+
+        //Update current tile
+        tilesLabel.setText("Tiles In Bag: "+model.getTileBag().getNumberOfTilesLeft());
+
+        refreshBoard();
+
+    }
+
 
 }

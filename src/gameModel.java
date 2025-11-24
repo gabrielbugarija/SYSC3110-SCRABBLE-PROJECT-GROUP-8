@@ -123,10 +123,8 @@ public class gameModel {
         cell.setOccupied();
 
         getCurrentPlayer().removeTiles(selectedRackIndex);
+        updateCells();
 
-        while (getCurrentPlayer().getRack().size() < 7 && tileBag.size() > 0) {
-            getCurrentPlayer().getRack().add(tileBag.drawTile());
-        }
 
         selectedRackIndex = -1;
         return true;
@@ -139,6 +137,9 @@ public class gameModel {
 
     public void advanceTurn(){
         // next player index.
+        while (getCurrentPlayer().getRack().size() < 7 && tileBag.size() > 0) {
+            getCurrentPlayer().getRack().add(tileBag.drawTile());
+        }
         currentPlayer = (currentPlayer+1)%getNumberOfTotalPlayers();
         updateViews();
     }
@@ -160,6 +161,12 @@ public class gameModel {
             view.handleAdvanceTurn();
         }
     }
+    public void updateCells() {
+        for (gameView view : views) {
+            view.handleUpdateCells();
+        }
+    }
+
 
     public TileBag getTileBag(){
         return this.tileBag;

@@ -182,11 +182,11 @@ public class gameController implements ActionListener {
                 Cell[][] board = model.getBoard();
                 Tile placedTile = board[row][col].getTile();
                 tilesPlacedThisTurn.add(new PlacedTile(row, col, placedTile.getLetter()));
-                model.updateViews();
+
             } else {
                 System.out.println("Could not place tile.");
             }
-            model.updateViews();
+            model.updateCells();
 
             return;
         }
