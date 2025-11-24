@@ -129,21 +129,91 @@ public class AIPlayer extends Player {
     public boolean makeMove(gameModel model) {
 
         ArrayList<Tile> rack = model.getCurrentPlayer().getRack();
-        for (int i = 0; i < rack.size(); i++) {
-            System.out.println(rack.get(i));
-        }
-        System.out.println("AI Make Move");
-
 
         IndexedString validWord = findBestWord();
-        System.out.println(validWord.word);
-        System.out.println(validWord.indexes);
+        if (validWord == null) return false;
+
+        System.out.println("AI Make Move: " + validWord.word);
+        System.out.println("Indexes: " + validWord.indexes);
+
+        Cell[][] board = model.getBoard();
+        int length = validWord.word.length();
 
 
-        for (int i = 0; i < validWord.indexes.size(); i++) {
-            model.setSelectedRackIndex(validWord.indexes.get(i));
-            model.placeSelectedTileAt(7+i,7);
+        // place horizontally at center
+
+        if (!model.isFirstMoveDone()) {
+
+            int row = 7;
+            int col = 7;
+
+            // place the word horizontally so it covers center
+            col = col - (length / 2);
+            if (col < 0) col = 0;
+            if (col + length > 15) col = 15 - length;
+
+            for (int i = 0; i < length; i++) {
+                int rackIndex = validWord.indexes.get(i);
+                model.setSelectedRackIndex(rackIndex);
+                model.placeSelectedTileAt(row, col + i);
+            }
+
+            return true;
         }
-        return false;
+
+        // try horizontal then vertical
+
+
+        for (int r = 0; r < 15; r++) {
+            for (int c = 0; c <= 15 - length; c++) {
+
+                boolean canPlace = true;
+
+                // check if all required cells are empty
+                for (int i = 0; i < length; i++) {
+                    if (!board[r][c + i].isEmpty()) {
+                        canPlace = false;
+                        break;
+                    }
+                }
+
+                if (canPlace) {
+
+                    for (int i = 0; i < length; i++) {
+                        int rackIndex = validWord.indexes.get(i);
+                        model.setSelectedRackIndex(rackIndex);
+                        model.placeSelectedTileAt(r, c + i);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        for (int r = 0; r <= 15 - length; r++) {
+            for (int c = 0; c < 15; c++) {
+
+                boolean canPlace = true;
+
+                for (int i = 0; i < length; i++) {
+                    if (!board[r + i][c].isEmpty()) {
+                        canPlace = false;
+                        break;
+                    }
+                }
+
+                if (canPlace) {
+
+                    for (int i = 0; i < length; i++) {
+                        int rackIndex = validWord.indexes.get(i);
+                        model.setSelectedRackIndex(rackIndex);
+                        model.placeSelectedTileAt(r + i, c);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        return false; // no valid place found
     }
+
 }
