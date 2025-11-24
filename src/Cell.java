@@ -27,14 +27,25 @@ public class Cell  {
     }
 
     public char getLetter() {
-        if (empty){
+        if (empty || tile == null) {
             return '-';
         }
-        else {
-            return  tile.getLetter();
+
+        // If this is a blank tile, show the assigned letter (if any)
+        if (tile.isBlank()) {
+            char assigned = tile.getAssignedLetter();
+            if (assigned != '\0') {
+                // Same convention as Tile.toString(): blanks are shown as lowercase
+                return Character.toLowerCase(assigned);
+            }
+            // Blank that hasn’t been assigned yet
+            return '*';
         }
 
+        // Normal (non-blank) tile
+        return tile.getLetter();
     }
+
 
     public void setTile(Tile tile) {
 
@@ -75,11 +86,12 @@ public class Cell  {
 
     @Override
     public String toString() {
-        if(empty){
+        if (empty || tile == null) {
             return "-";
         }
-        return String.valueOf(tile.getLetter());
+        return String.valueOf(getLetter());
     }
+
 }
 
 

@@ -169,19 +169,23 @@ public class gameFrame extends JFrame implements gameView{
         tilesPanel.add(tilesLabelBottom);
 
         // Add tile buttons
+        // Add tile buttons
         tileButtons = new JButton[7];
         for (int i = 0; i < 7; i++) {
             tileButtons[i] = new JButton();
             tileButtons[i].setPreferredSize(new Dimension(50, 40));
             tileButtons[i].setBackground(new Color(220, 220, 200));
             tileButtons[i].setFont(new Font("Arial", Font.BOLD, 10));
-            tileButtons[i].setText(String.valueOf(model.getCurrentPlayer().getRack().get(i).getLetter()));
+
+            Tile t = model.getCurrentPlayer().getRack().get(i);
+            tileButtons[i].setText(t.toString());  // <-- use toString() here
+
             tileButtons[i].setFocusPainted(false);
             tileButtons[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
             tilesPanel.add(tileButtons[i]);
             tileButtons[i].setActionCommand("Tile: " + i);
             tileButtons[i].addActionListener(gc);
-        }
+    }
 
         bottomPanel.add(buttonPanel, BorderLayout.WEST);
         bottomPanel.add(tilesPanel, BorderLayout.CENTER);
