@@ -11,26 +11,30 @@ import java.util.Scanner;
  *
  */
 
-public class gameFrame extends JFrame implements gameView{
+public class gameFrame extends JFrame implements gameView {
 
-    private Cell[][] board;
-    private boolean empty;
-    private static final int BOARD_SIZE = 15;
-    private static final int CELL_SIZE = 40;
+    private static final int BOARD_SIZE = 15;   // playable cells
+    private static final int CELL_SIZE  = 40;   // pixel size of each board cell
+
+    // NOTE: this local board is no longer used for logic, model's board is the truth
+    private Cell[][] board = new Cell[BOARD_SIZE][BOARD_SIZE];
 
     gameModel model;
-    JPanel mainPanel;
-    JPanel scorePanel;
-    JLabel scoreLabel;
-    JPanel boardPanel;
-    JPanel rightPanel;
-    JLabel tilesLabel;
-    JPanel bottomPanel;
-    JPanel buttonPanel;
-    JPanel tilesPanel;
-    JLabel tilesLabelBottom;
-    private JButton[] tileButtons;
-    private JButton[][] boardButtons = new JButton[15][15];
+
+    JPanel  mainPanel;
+    JPanel  scorePanel;
+    JLabel  scoreLabel;
+    JPanel  boardPanel;
+    JPanel  rightPanel;
+    JLabel  tilesLabel;
+    JPanel  bottomPanel;
+    JPanel  buttonPanel;
+    JPanel  tilesPanel;
+    JLabel  tilesLabelBottom;
+
+    private JButton[]   tileButtons;
+    // +1 for row/column headers
+    private JButton[][] boardButtons = new JButton[BOARD_SIZE + 1][BOARD_SIZE + 1];
 
     public gameFrame() {
         model = new gameModel();
@@ -43,9 +47,7 @@ public class gameFrame extends JFrame implements gameView{
         }
         model.setPlayersList(names);
 
-        this.board = new Cell[15][15];
         initBoard();
-        this.empty = true;
 
         setTitle("Scrabble Board");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,88 +56,94 @@ public class gameFrame extends JFrame implements gameView{
         model.addGameView(this);
         gameController gc = new gameController(model);
 
-        // Main panel
+        // ===== MAIN PANEL =====
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
 
-        // Top score panel
+        // ===== TOP SCORE PANEL =====
         scorePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         scorePanel.setBackground(new Color(64, 64, 64));
 
-        StringBuilder scoreText = new StringBuilder();
-        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
-            Player player = model.getPlayersList().get(i);
-            scoreText.append(player.getName()).append("'s Score: ").append(player.getScore());
-            if (i < model.getPlayersList().size() - 1) {
-                scoreText.append("   ");
-            }
-        }
-
-
-
-        scoreLabel = new JLabel(scoreText.toString());
+        scoreLabel = new JLabel(buildScoreText());
         scoreLabel.setForeground(Color.WHITE);
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
         scorePanel.add(scoreLabel);
-        refreshScoreLabel();
 
-        // Board panel with grid
+        // ===== BOARD PANEL =====
+        // +1 row/col for headers
         boardPanel = new JPanel(new GridLayout(BOARD_SIZE + 1, BOARD_SIZE + 1));
         boardPanel.setBackground(Color.BLACK);
 
+        Cell[][] modelBoard = model.getBoard();
 
-        for (int row = 0; row < BOARD_SIZE; row++) {
-            for (int col = 0; col < BOARD_SIZE; col++) {
+        for (int row = 0; row <= BOARD_SIZE; row++) {
+            for (int col = 0; col <= BOARD_SIZE; col++) {
+
                 JButton cell = new JButton();
                 cell.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                 cell.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+                cell.setLayout(new BorderLayout());
 
+                // Header cells
                 if (row == 0 && col == 0) {
-                    cell.setBackground(new Color(64, 64, 64));
+                    cell.setBackground(new Color(64, 64, 64)); // top-left corner
                 } else if (row == 0) {
+                    // column headers
                     cell.setBackground(new Color(96, 96, 96));
                     JLabel label = new JLabel(String.valueOf(col), SwingConstants.CENTER);
                     label.setForeground(Color.WHITE);
                     label.setFont(new Font("Arial", Font.BOLD, 12));
-                    cell.setLayout(new BorderLayout());
                     cell.add(label, BorderLayout.CENTER);
                 } else if (col == 0) {
+                    // row headers
                     cell.setBackground(new Color(96, 96, 96));
                     JLabel label = new JLabel(String.valueOf(row), SwingConstants.CENTER);
                     label.setForeground(Color.WHITE);
                     label.setFont(new Font("Arial", Font.BOLD, 12));
-                    cell.setLayout(new BorderLayout());
                     cell.add(label, BorderLayout.CENTER);
-                } else {
-                    cell.setBackground(Color.WHITE);
+                } else {   // real board cell
                     cell.setLayout(new BorderLayout());
-                    cell.add(new JLabel(String.valueOf(board[row][col].getLetter()), SwingConstants.CENTER),
-                            BorderLayout.CENTER);
+                    Cell boardCell = model.getBoard()[row - 1][col - 1];
+
+                    if (boardCell.getMultiplier() > 1) {
+                        cell.setBackground(getCellColor(boardCell));
+                        JLabel label = new JLabel(getCellText(boardCell), SwingConstants.CENTER);
+                        label.setFont(new Font("Arial", Font.BOLD, 12));
+                        cell.add(label, BorderLayout.CENTER);
+                    } else {
+                        JLabel label = new JLabel(String.valueOf(boardCell.getLetter()), SwingConstants.CENTER);
+                        label.setFont(new Font("Arial", Font.BOLD, 12));
+                        cell.add(label, BorderLayout.CENTER);
+                    }
+
                     cell.addActionListener(gc);
-                    cell.setActionCommand(row + " " + col);
+                    cell.setActionCommand((row - 1) + " " + (col - 1));
                 }
+
 
                 boardButtons[row][col] = cell;
                 boardPanel.add(cell);
             }
         }
 
-
-        // Right info panel
+        // ===== RIGHT INFO PANEL =====
         rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setPreferredSize(new Dimension(150, 0));
 
-        tilesLabel = new JLabel("Tiles In Bag: "+model.getTileBag().getNumberOfTilesLeft(), SwingConstants.CENTER);
+        tilesLabel = new JLabel(
+                "Tiles In Bag: " + model.getTileBag().getNumberOfTilesLeft(),
+                SwingConstants.CENTER
+        );
         tilesLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         tilesLabel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
         rightPanel.add(tilesLabel, BorderLayout.NORTH);
 
-        // Bottom panel with buttons and tiles
+        // ===== BOTTOM PANEL =====
         bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBackground(Color.WHITE);
 
-        // Button panel
+        // --- Buttons (Play / Swap / Pass) ---
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.setBackground(Color.WHITE);
 
@@ -161,15 +169,14 @@ public class gameFrame extends JFrame implements gameView{
         buttonPanel.add(swapButton);
         buttonPanel.add(passButton);
 
-        // Tiles panel
+        // --- Player tiles (rack) ---
         tilesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tilesPanel.setBackground(Color.WHITE);
+
         tilesLabelBottom = new JLabel(model.getCurrentPlayer().getName() + " 's Tiles:");
         tilesLabelBottom.setFont(new Font("Arial", Font.PLAIN, 12));
         tilesPanel.add(tilesLabelBottom);
 
-        // Add tile buttons
-        // Add tile buttons
         tileButtons = new JButton[7];
         for (int i = 0; i < 7; i++) {
             tileButtons[i] = new JButton();
@@ -177,20 +184,21 @@ public class gameFrame extends JFrame implements gameView{
             tileButtons[i].setBackground(new Color(220, 220, 200));
             tileButtons[i].setFont(new Font("Arial", Font.BOLD, 10));
 
-            Tile t = model.getCurrentPlayer().getRack().get(i);
-            tileButtons[i].setText(t.toString());  // <-- use toString() here
+            Tile tile = model.getCurrentPlayer().getRack().get(i);
+            tileButtons[i].setText(tile.toString());  // shows '*' or assigned letter
 
             tileButtons[i].setFocusPainted(false);
             tileButtons[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-            tilesPanel.add(tileButtons[i]);
             tileButtons[i].setActionCommand("Tile: " + i);
             tileButtons[i].addActionListener(gc);
-    }
+
+            tilesPanel.add(tileButtons[i]);
+        }
 
         bottomPanel.add(buttonPanel, BorderLayout.WEST);
         bottomPanel.add(tilesPanel, BorderLayout.CENTER);
 
-        // Add all panels to main panel
+        // ===== ADD PANELS TO FRAME =====
         mainPanel.add(scorePanel, BorderLayout.NORTH);
         mainPanel.add(boardPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
@@ -199,9 +207,10 @@ public class gameFrame extends JFrame implements gameView{
         add(mainPanel);
         pack();
         setLocationRelativeTo(null);
-        this.setVisible(true);
+        setVisible(true);
     }
 
+    /** local dummy board init (model’s board is the real one). */
     private void initBoard() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -210,27 +219,50 @@ public class gameFrame extends JFrame implements gameView{
         }
     }
 
+    /** Redraws the board from the model after a move. */
     public void refreshBoard() {
         Cell[][] b = model.getBoard();
 
-        for (int r = 1; r < 15; r++) {
-            for (int c = 1; c < 15; c++) {
+        for (int r = 1; r <= BOARD_SIZE; r++) {
+            for (int c = 1; c <= BOARD_SIZE; c++) {
                 JButton btn = boardButtons[r][c];
                 if (btn.getComponentCount() > 0 && btn.getComponent(0) instanceof JLabel) {
                     JLabel lbl = (JLabel) btn.getComponent(0);
-                    char ch = b[r][c].isEmpty() ? '-' : b[r][c].getLetter();
-                    lbl.setText(String.valueOf(ch));
+                    Cell cell = b[r - 1][c - 1];
+
+                    if (!cell.isEmpty() && cell.getTile() != null) {
+                        // There is a tile here – show tile letter (handles blanks)
+                        lbl.setText(getTileDisplayText(cell));
+                    } else if (cell.getMultiplier() > 1) {
+                        lbl.setText(getCellText(cell));
+                    } else {
+                        lbl.setText("");
+                    }
                 }
             }
         }
-
 
         boardPanel.revalidate();
         boardPanel.repaint();
         updateScoreDisplay();
     }
 
-    private void refreshScoreLabel() {
+    public int getNumberOfPlayers() {
+        int numberOfPlayers;
+        while (true) {
+            numberOfPlayers = Integer.parseInt(
+                    JOptionPane.showInputDialog("Enter number of Players:")
+            );
+            if (numberOfPlayers <= 4 && numberOfPlayers >= 2) {
+                break;
+            } else {
+                System.out.println("The number of player should be between 2 and 4");
+            }
+        }
+        return numberOfPlayers;
+    }
+
+    private String buildScoreText() {
         StringBuilder scoreText = new StringBuilder();
         for (int i = 0; i < model.getNumberOfPlayers(); i++) {
             Player player = model.getPlayersList().get(i);
@@ -241,53 +273,22 @@ public class gameFrame extends JFrame implements gameView{
                 scoreText.append("   ");
             }
         }
-        scoreLabel.setText(scoreText.toString());
-    }
-
-
-    // Initial entry dialogue.
-    public int getNumberOfPlayers() {
-        int numberOfPlayers = 0;
-        while (true) {
-            numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Enter number of Players:"));
-            if (numberOfPlayers <= 4 && numberOfPlayers >= 2) {
-                break;
-            } else {
-                System.out.println("The number of player should be between 2 and 4");
-            }
-        }
-        return numberOfPlayers;
+        return scoreText.toString();
     }
 
     public void updateScoreDisplay() {
-        StringBuilder score = new StringBuilder();
-
-        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
-
-            Player player = model.getPlayersList().get(i); // Fix score table error.
-            score.append(player.getName()).append("'s Score: ").append(player.getScore());
-
-            if (i < model.getNumberOfPlayers() - 1) {
-                score.append(", ");
-            }
-        }
-        scoreLabel.setText(score.toString());
-
+        scoreLabel.setText(buildScoreText());
         scorePanel.revalidate();
         scorePanel.repaint();
     }
+
     // Handles advancing turn to the next player. Updates labels and buttons.
     @Override
     public void handleAdvanceTurn() {
-
         Player cp = model.getCurrentPlayer();
 
-
-        String text = (cp.getName() + "'s Turn");
-        tilesLabelBottom.setText(text);
-
-        //Update current tile
-        tilesLabel.setText("Tiles In Bag: "+model.getTileBag().getNumberOfTilesLeft());
+        tilesLabelBottom.setText(cp.getName() + "'s Turn");
+        tilesLabel.setText("Tiles In Bag: " + model.getTileBag().getNumberOfTilesLeft());
 
         // Update tile rack on GUI
         for (int i = 0; i < 7; i++) {
@@ -295,6 +296,52 @@ public class gameFrame extends JFrame implements gameView{
         }
 
         refreshBoard();
-        refreshScoreLabel();
+    }
+
+    private Color getCellColor(Cell cell) {
+        if (cell.getMultiplier() > 1) {
+            if (cell.isWordMultiplier()) {
+                // word bonus: red-ish
+                return cell.getMultiplier() == 3
+                        ? new Color(255, 150, 150)
+                        : new Color(255, 200, 200);
+            } else {
+                // letter bonus: blue-ish
+                return cell.getMultiplier() == 3
+                        ? new Color(150, 150, 255)
+                        : new Color(200, 200, 255);
+            }
+        }
+        return Color.WHITE;
+    }
+
+    private String getCellText(Cell cell) {
+        if (cell.getMultiplier() > 1) {
+            if (cell.isWordMultiplier()) {
+                return cell.getMultiplier() == 3 ? "TW" : "DW";
+            } else {
+                return cell.getMultiplier() == 3 ? "TL" : "DL";
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Text to show for a tile on the board, including blanks.
+     */
+    private String getTileDisplayText(Cell cell) {
+        Tile t = cell.getTile();
+        if (t == null) {
+            return "";
+        }
+        if (t.isBlank()) {
+            char assigned = t.getAssignedLetter();
+            if (assigned != '\0') {
+                // show lower-case letter for assigned blank, to match rack display
+                return String.valueOf(Character.toLowerCase(assigned));
+            }
+            return "*"; // unassigned blank (should be rare, but safe)
+        }
+        return String.valueOf(t.getLetter());
     }
 }

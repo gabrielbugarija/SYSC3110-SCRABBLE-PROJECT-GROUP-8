@@ -38,7 +38,8 @@ private final Set<String> validWords =  new HashSet<>(Set.of("ability", "absorb"
 
 // Method to return true if provided word is valid or not given the validWords set
 public boolean isValidWord(String word) {
-    return validWords.contains(word);
+    if (word == null) return false;
+    return validWords.contains(word.toLowerCase());
 }
 
 //  Getter method for all valid words

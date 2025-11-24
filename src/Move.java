@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Move {
-
     private Player player;
 
     public Move(Player player, TileBag tileBag, Board board, Scanner scanner) {
@@ -74,13 +73,6 @@ public class Move {
                             System.out.print("Invalid entry. Please try again\n");
                         }
                         tilesToPlace.add(player.getRack().get(tileIndexToPlace));
-
-                        Tile selectedTile = player.getRack().get(tileIndexToPlace);
-                        if (selectedTile.isBlank()) {
-                            assignBlankTile(selectedTile, scanner);
-                        }
-
-                        tilesToPlace.add(selectedTile);
                         int row;
                         int col;
                         while (true) {
@@ -93,7 +85,7 @@ public class Move {
                             System.out.print("Invalid entry. Please try again\n");
                         }
 
-                            setRow.add(row);
+                        setRow.add(row);
 
 
                         while (true) {
@@ -153,27 +145,6 @@ public class Move {
         }
     }
 
-    private void assignBlankTile(Tile tile, Scanner scanner) {
-        if (!tile.isBlank()) {
-            return; // Not a blank tile
-        }
-
-        char assignedLetter;
-        while (true) {
-            System.out.print("This is a blank tile! Enter a letter to assign (A-Z): ");
-            String input = scanner.nextLine().trim().toUpperCase();
-
-            if (input.length() == 1 && Character.isLetter(input.charAt(0))) {
-                assignedLetter = input.charAt(0);
-                break;
-            }
-            System.out.println("Invalid input. Please enter a single letter.");
-        }
-
-        tile.setAssignedLetter(assignedLetter);
-        System.out.println("Blank tile assigned as: " + assignedLetter);
-    }
-
     public void placeTiles(Board board, int direction, ArrayList<Tile> tilesToPlace, ArrayList<Integer> rowsList, ArrayList<Integer> columnsList){
         boolean successful;
         if (direction == 0){
@@ -202,36 +173,36 @@ public class Move {
     }
 
     private void sortPlacementByPosition(ArrayList<Integer> rows, ArrayList<Integer> cols, ArrayList<Tile> tiles, int direction) {
-    ArrayList<Integer> order = new ArrayList<>();
-    for (int i = 0; i < tiles.size(); i++) {
-        order.add(i);
+        ArrayList<Integer> order = new ArrayList<>();
+        for (int i = 0; i < tiles.size(); i++) {
+            order.add(i);
+        }
+
+        if (direction == 0) {
+            // horizontal -> sort by column
+            order.sort((a, b) -> Integer.compare(cols.get(a), cols.get(b)));
+        } else {
+            // vertical -> sort by row
+            order.sort((a, b) -> Integer.compare(rows.get(a), rows.get(b)));
+        }
+
+        ArrayList<Integer> newRows = new ArrayList<>();
+        ArrayList<Integer> newCols = new ArrayList<>();
+        ArrayList<Tile> newTiles = new ArrayList<>();
+
+        for (int index : order) {
+            newRows.add(rows.get(index));
+            newCols.add(cols.get(index));
+            newTiles.add(tiles.get(index));
+        }
+
+        rows.clear();
+        cols.clear();
+        tiles.clear();
+        rows.addAll(newRows);
+        cols.addAll(newCols);
+        tiles.addAll(newTiles);
     }
-
-    if (direction == 0) {
-        // horizontal -> sort by column
-        order.sort((a, b) -> Integer.compare(cols.get(a), cols.get(b)));
-    } else {
-        // vertical -> sort by row
-        order.sort((a, b) -> Integer.compare(rows.get(a), rows.get(b)));
-    }
-
-    ArrayList<Integer> newRows = new ArrayList<>();
-    ArrayList<Integer> newCols = new ArrayList<>();
-    ArrayList<Tile> newTiles = new ArrayList<>();
-
-    for (int index : order) {
-        newRows.add(rows.get(index));
-        newCols.add(cols.get(index));
-        newTiles.add(tiles.get(index));
-    }
-
-    rows.clear();
-    cols.clear();
-    tiles.clear();
-    rows.addAll(newRows);
-    cols.addAll(newCols);
-    tiles.addAll(newTiles);
-}
 
 
 
@@ -241,11 +212,24 @@ public class Move {
         sortPlacementByPosition(setRow, setCol, tilesToPlace, direction);
 
         int scoreToAdd = 0 ;
+        int wordMultiplier = 1;
 
         for (int i = 0; i < tilesToPlace.size(); i++) {
             word.append(tilesToPlace.get(i).getLetter());
-            scoreToAdd += tilesToPlace.get(i).getPoints() * board.getCell(setRow.get(i), setCol.get(i)).getMultiplier();
+            int row = setRow.get(i);
+            int col = setCol.get(i);
+            Cell cell = board.getCell(row, col);
+            int cellMultiplier = cell.getMultiplier();
+
+            if (cell.isWordMultiplier()){
+                wordMultiplier *= cellMultiplier;
+                scoreToAdd += tilesToPlace.get(i).getPoints();
+            } else {
+                scoreToAdd += tilesToPlace.get(i).getPoints() * cellMultiplier;
+            }
         }
+
+        scoreToAdd *= wordMultiplier;
 
         if (direction == 1) {
             int upper = Collections.min(setRow);
@@ -257,7 +241,7 @@ public class Move {
                 cell = board.getCell(upper-1,setCol.get(0));
                 if(!cell.isEmpty()){
                     word.insert(0, cell.getLetter());
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                     upper--;
                 }
                 else{
@@ -269,7 +253,7 @@ public class Move {
                 cell = board.getCell(lower+1,setCol.get(0));
                 if(!cell.isEmpty()){
                     word.append(cell.getLetter());
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                     lower++;
                 }
                 else{
@@ -287,7 +271,7 @@ public class Move {
                 cell = board.getCell(setRow.get(0),left-1);
                 if(!cell.isEmpty()){
                     word.insert(0, cell.getLetter());
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                     left--;
 
                 }
@@ -301,7 +285,7 @@ public class Move {
                 if(!cell.isEmpty()){
                     word.append(cell.getLetter());
                     right++;
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                 }
                 else{
                     foundNull = true;
@@ -436,6 +420,6 @@ public class Move {
         }
         return true;
     }
-    
+
 
 }

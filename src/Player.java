@@ -75,6 +75,10 @@ public class Player {
         return score;
         }
 
+    public void addScore(int score){
+        this.score += score;
+    }
+
     @Override
     public String toString() {
         return "\nPlayer Name: "+ this.name + " Score: "+this.score +" \n";

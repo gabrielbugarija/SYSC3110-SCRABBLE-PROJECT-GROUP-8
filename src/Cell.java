@@ -6,46 +6,54 @@
  *
  */
 
-public class Cell  {
+public class Cell {
     private int multiplier;
     private Tile tile;
     private boolean empty;
+    private boolean isWordMultiplier;
 
-    public Cell(){
+    public Cell() {
         this.multiplier = 1;
-        this.empty=true;
+        this.empty = true;
+        this.isWordMultiplier = false;
     }
 
 
-    public Cell(int multiplier){
+    public Cell(int multiplier) {
         this.multiplier = multiplier;
+        this.isWordMultiplier = false;
+    }
+
+    public void setWordMultiplier(boolean wordMultiplier) {
+        isWordMultiplier = wordMultiplier;
+    }
+
+    public boolean isWordMultiplier() {
+        return isWordMultiplier;
     }
 
     public int getMultiplier() {
-
         return multiplier;
     }
 
     public char getLetter() {
-        if (empty || tile == null) {
+        if (empty) {
             return '-';
         }
 
-        // If this is a blank tile, show the assigned letter (if any)
+        // Handle blanks explicitly
         if (tile.isBlank()) {
             char assigned = tile.getAssignedLetter();
             if (assigned != '\0') {
-                // Same convention as Tile.toString(): blanks are shown as lowercase
+                // use lowercase to visually distinguish blanks from normal tiles
                 return Character.toLowerCase(assigned);
             }
-            // Blank that hasn’t been assigned yet
+            // unassigned blank on the board – show '*'
             return '*';
         }
 
-        // Normal (non-blank) tile
         return tile.getLetter();
     }
-
 
     public void setTile(Tile tile) {
 
@@ -53,13 +61,11 @@ public class Cell  {
         setOccupied();
     }
 
-
     public Tile getTile() {
         return tile;
     }
 
-
-    public int getTilePoints(){
+    public int getTilePoints() {
 
         return tile.getPoints();
     }
@@ -73,7 +79,7 @@ public class Cell  {
     }
 
     public void setEmpty() {
-        this.tile=null;
+        this.tile = null;
         this.empty = true;
     }
 
@@ -81,17 +87,13 @@ public class Cell  {
         this.empty = false;
     }
 
-
-
-
     @Override
     public String toString() {
-        if (empty || tile == null) {
+        if (empty) {
             return "-";
         }
-        return String.valueOf(getLetter());
+
+        return tile.toString();
     }
-
 }
-
 
