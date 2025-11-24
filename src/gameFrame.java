@@ -84,6 +84,7 @@ public class gameFrame extends JFrame implements gameView{
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 JButton cell = new JButton();
+                Cell boardCell = model.getBoard()[row][col];
                 cell.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                 cell.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
@@ -104,10 +105,17 @@ public class gameFrame extends JFrame implements gameView{
                     cell.setLayout(new BorderLayout());
                     cell.add(label, BorderLayout.CENTER);
                 } else {
-                    cell.setBackground(Color.WHITE);
                     cell.setLayout(new BorderLayout());
-                    cell.add(new JLabel(String.valueOf(board[row][col].getLetter()), SwingConstants.CENTER),
-                            BorderLayout.CENTER);
+                    if (boardCell.getMultiplier() > 1) {
+                        cell.setBackground(getCellColor(boardCell));
+                        JLabel label = new JLabel(String.valueOf(getCellText(boardCell)), SwingConstants.CENTER);
+                        label.setFont(new Font("Arial", Font.BOLD, 12));
+                        cell.setLayout(new BorderLayout());
+                        cell.add(label, BorderLayout.CENTER);
+                    } else {
+                        cell.add(new JLabel(String.valueOf(board[row][col].getLetter()), SwingConstants.CENTER),
+                                BorderLayout.CENTER);
+                    }
                     cell.addActionListener(gc);
                     cell.setActionCommand(row + " " + col);
                 }
@@ -269,5 +277,27 @@ public class gameFrame extends JFrame implements gameView{
 
         updateScoreDisplay();
         refreshBoard();
+    }
+
+    private Color getCellColor(Cell cell) {
+        if (cell.getMultiplier() > 1) {
+            if (cell.isWordMultiplier()) {
+                return cell.getMultiplier() == 3 ? new Color(255, 150, 150) : new Color(255, 200, 200);
+            } else {
+                return cell.getMultiplier() == 3 ? new Color(150, 150, 255) : new Color(200, 200, 255);
+            }
+        }
+        return Color.WHITE;
+    }
+
+    private String getCellText( Cell cell) {
+        if (cell.getMultiplier() > 1) {
+            if (cell.isWordMultiplier()) {
+                return cell.getMultiplier() + "WS";
+            } else {
+                return cell.getMultiplier() + "LS";
+            }
+        }
+        return "";
     }
 }

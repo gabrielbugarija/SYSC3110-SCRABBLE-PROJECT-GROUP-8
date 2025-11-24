@@ -213,11 +213,24 @@ public class Move {
         sortPlacementByPosition(setRow, setCol, tilesToPlace, direction);
 
         int scoreToAdd = 0 ;
+        int wordMultiplier = 1;
 
         for (int i = 0; i < tilesToPlace.size(); i++) {
             word.append(tilesToPlace.get(i).getLetter());
-            scoreToAdd += tilesToPlace.get(i).getPoints() * board.getCell(setRow.get(i), setCol.get(i)).getMultiplier();
+            int row = setRow.get(i);
+            int col = setCol.get(i);
+            Cell cell = board.getCell(row, col);
+            int cellMultiplier = cell.getMultiplier();
+
+            if (cell.isWordMultiplier()){
+                wordMultiplier *= cellMultiplier;
+                scoreToAdd += tilesToPlace.get(i).getPoints();
+            } else {
+                scoreToAdd += tilesToPlace.get(i).getPoints() * cellMultiplier;
+            }
         }
+
+        scoreToAdd *= wordMultiplier;
 
         if (direction == 1) {
             int upper = Collections.min(setRow);
@@ -229,7 +242,7 @@ public class Move {
                 cell = board.getCell(upper-1,setCol.get(0));
                 if(!cell.isEmpty()){
                     word.insert(0, cell.getLetter());
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                     upper--;
                 }
                 else{
@@ -241,7 +254,7 @@ public class Move {
                 cell = board.getCell(lower+1,setCol.get(0));
                 if(!cell.isEmpty()){
                     word.append(cell.getLetter());
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                     lower++;
                 }
                 else{
@@ -259,7 +272,7 @@ public class Move {
                 cell = board.getCell(setRow.get(0),left-1);
                 if(!cell.isEmpty()){
                     word.insert(0, cell.getLetter());
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                     left--;
 
                 }
@@ -273,7 +286,7 @@ public class Move {
                 if(!cell.isEmpty()){
                     word.append(cell.getLetter());
                     right++;
-                    scoreToAdd += cell.getTilePoints() * cell.getMultiplier();
+                    scoreToAdd += cell.getTilePoints();
                 }
                 else{
                     foundNull = true;

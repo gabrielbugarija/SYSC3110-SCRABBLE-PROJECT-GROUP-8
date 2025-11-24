@@ -10,19 +10,29 @@ public class Cell  {
     private int multiplier;
     private Tile tile;
     private boolean empty;
+    private boolean isWordMultiplier;
 
     public Cell(){
         this.multiplier = 1;
         this.empty=true;
+        this.isWordMultiplier = false;
     }
 
 
     public Cell(int multiplier){
         this.multiplier = multiplier;
+        this.isWordMultiplier = false;
+    }
+
+    public void setWordMultiplier(boolean wordMultiplier) {
+        isWordMultiplier = wordMultiplier;
+    }
+
+    public boolean isWordMultiplier() {
+        return isWordMultiplier;
     }
 
     public int getMultiplier() {
-
         return multiplier;
     }
 
@@ -42,13 +52,9 @@ public class Cell  {
         setOccupied();
     }
 
-
-
-
     public Tile getTile() {
         return tile;
     }
-
 
     public int getTilePoints(){
 
@@ -71,7 +77,6 @@ public class Cell  {
     public void setOccupied() {
         this.empty = false;
     }
-
 
     @Override
     public String toString() {
