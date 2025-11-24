@@ -35,6 +35,7 @@ public class gameFrame extends JFrame implements gameView{
     public gameFrame() {
         model = new gameModel();
         model.setNumberOfPlayers(getNumberOfPlayers());
+        model.setNumberOfAIPlayers(getNumberOfAIPlayers());
         ArrayList<String> names = new ArrayList<>();
 
         for (int i = 0; i < model.getNumberOfPlayers(); i++) {
@@ -42,6 +43,7 @@ public class gameFrame extends JFrame implements gameView{
             names.add(input);
         }
         model.setPlayersList(names);
+        model.setAIPlayersList();
 
         this.board = new Cell[15][15];
         initBoard();
@@ -63,7 +65,7 @@ public class gameFrame extends JFrame implements gameView{
         scorePanel.setBackground(new Color(64, 64, 64));
 
         StringBuilder scoreText = new StringBuilder();
-        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
+        for (int i = 0; i < model.getNumberOfTotalPlayers(); i++) {
             Player player = model.getPlayersList().get(i);
             scoreText.append(player.getName()).append("'s Score: ").append(player.getScore());
             if (i < model.getPlayersList().size() - 1) {
@@ -216,8 +218,6 @@ public class gameFrame extends JFrame implements gameView{
                 }
             }
         }
-
-
         boardPanel.revalidate();
         boardPanel.repaint();
         updateScoreDisplay();
@@ -228,10 +228,24 @@ public class gameFrame extends JFrame implements gameView{
         int numberOfPlayers = 0;
         while (true) {
             numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Enter number of Players:"));
-            if (numberOfPlayers <= 4 && numberOfPlayers >= 2) {
+            if (numberOfPlayers <= 4 && numberOfPlayers >= 1) {
                 break;
             } else {
-                System.out.println("The number of player should be between 2 and 4");
+                System.out.println("The number of player should be between 1 and 4");
+            }
+        }
+        return numberOfPlayers;
+    }
+
+    // Initial entry dialogue.
+    public int getNumberOfAIPlayers() {
+        int numberOfPlayers = 0;
+        while (true) {
+            numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Enter number of AI Players:"));
+            if (numberOfPlayers <= 3 && numberOfPlayers >= 1) {
+                break;
+            } else {
+                System.out.println("The number of player should be between 1 and 3");
             }
         }
         return numberOfPlayers;
@@ -240,7 +254,7 @@ public class gameFrame extends JFrame implements gameView{
     public void updateScoreDisplay() {
         StringBuilder score = new StringBuilder();
 
-        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
+        for (int i = 0; i < model.getNumberOfTotalPlayers(); i++) {
 
             Player player = model.getPlayersList().get(i); // Fix score table error.
             score.append(player.getName()).append("'s Score: ").append(player.getScore());
@@ -254,13 +268,13 @@ public class gameFrame extends JFrame implements gameView{
         scorePanel.revalidate();
         scorePanel.repaint();
     }
+
+
     // Handles advancing turn to the next player. Updates labels and buttons.
     @Override
     public void handleAdvanceTurn() {
 
         Player cp = model.getCurrentPlayer();
-
-
         String text = (cp.getName() + "'s Turn");
         tilesLabelBottom.setText(text);
 
@@ -274,4 +288,6 @@ public class gameFrame extends JFrame implements gameView{
 
         refreshBoard();
     }
+
+
 }
