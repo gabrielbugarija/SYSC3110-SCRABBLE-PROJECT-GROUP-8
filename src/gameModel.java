@@ -132,6 +132,7 @@ public class gameModel {
         return true;
     }
 
+
     public void removeGameView(gameView view){
         views.remove(view);
     }

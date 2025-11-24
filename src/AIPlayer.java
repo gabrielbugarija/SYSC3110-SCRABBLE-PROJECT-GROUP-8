@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class AIPlayer extends Player {
@@ -14,34 +15,44 @@ public class AIPlayer extends Player {
     }
 
 
+    static class IndexedString {
+        String word;
+        List<Integer> indexes;
+
+        IndexedString(String word, List<Integer> indexes) {
+            this.word = word;
+            this.indexes = indexes;
+        }
+    }
+
+
     public void AIMove(){
 
     }
 
 
-    public String findValidWord(){
-        String validWord;
+    public IndexedString findBestWord() {
 
         char[] letters = new char[getRack().size()];
         for (int i = 0; i < getRack().size(); i++) {
             letters[i] = getRack().get(i).getLetter();
         }
 
-
         for (int length = 7; length >= 2; length--) {
-            Set<String> combinations = new HashSet<>();
-            generateCombinations(letters, length, 0, new StringBuilder(), combinations);
 
-            for (String combination : combinations) {
-                Set<String> perms = new HashSet<>();
-                generatePermutations(combination.toCharArray(), 0, perms);
+            List<IndexedString> combos = new ArrayList<>();
+            generateCombinations(letters, length, 0, new StringBuilder(),
+                    new ArrayList<>(), combos);
 
-                // Check each permutation against dictionary
-                for (String perm : perms) {
-                    if (dictionary.isValidWord(perm)) {
-                        return perm;
+            for (IndexedString combo : combos) {
+
+                List<IndexedString> perms = new ArrayList<>();
+                generatePermutations(combo, 0, perms);
+
+                for (IndexedString perm : perms) {
+                    if (dictionary.isValidWord(perm.word)) {
+                        return perm;  // perm.word + perm.indexes
                     }
-
                 }
             }
         }
@@ -50,41 +61,70 @@ public class AIPlayer extends Player {
     }
 
     private void generateCombinations(char[] letters, int length, int start,
-                                      StringBuilder current, Set<String> result) {
+                                      StringBuilder current,
+                                      List<Integer> currentIndexes,
+                                      List<IndexedString> result) {
 
         if (current.length() == length) {
-            result.add(current.toString());
+            result.add(new IndexedString(current.toString(),
+                    new ArrayList<>(currentIndexes)));
             return;
         }
 
         for (int i = start; i < letters.length; i++) {
             current.append(letters[i]);
-            generateCombinations(letters, length, i + 1, current, result);
-            current.deleteCharAt(current.length() - 1); // Backtrack
+            currentIndexes.add(i);
+
+            generateCombinations(letters, length, i + 1, current, currentIndexes, result);
+
+            current.deleteCharAt(current.length() - 1);
+            currentIndexes.remove(currentIndexes.size() - 1);
         }
     }
 
 
-    private void generatePermutations(char[] chars, int index, Set<String> result) {
-        if (index == chars.length - 1) {
-            result.add(new String(chars));
+    private void generatePermutations(IndexedString combo,
+                                      int index,
+                                      List<IndexedString> result) {
+
+        char[] arr = combo.word.toCharArray();
+        List<Integer> idx = combo.indexes;
+
+        generatePermutationRecursive(arr, idx, index, result);
+    }
+
+    private void generatePermutationRecursive(char[] arr, List<Integer> idx,
+                                              int index,
+                                              List<IndexedString> result) {
+
+        if (index == arr.length) {
+            result.add(new IndexedString(new String(arr), new ArrayList<>(idx)));
             return;
         }
 
-        for (int i = index; i < chars.length; i++) {
-            swap(chars, index, i);
-            generatePermutations(chars, index + 1, result);
-            swap(chars, index, i); // Backtrack
+        for (int i = index; i < arr.length; i++) {
+            swap(arr, index, i);
+            swap(idx, index, i);
+
+            generatePermutationRecursive(arr, idx, index + 1, result);
+
+            swap(arr, index, i);
+            swap(idx, index, i);
         }
     }
 
-
-
-    private void swap(char[] chars, int i, int j) {
-        char temp = chars[i];
-        chars[i] = chars[j];
-        chars[j] = temp;
+    private void swap(char[] arr, int i, int j) {
+        char temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
+
+    private void swap(List<Integer> list, int i, int j) {
+        int temp = list.get(i);
+        list.set(i, list.get(j));
+        list.set(j, temp);
+    }
+
 
     public boolean makeMove(gameModel model) {
 
@@ -93,6 +133,12 @@ public class AIPlayer extends Player {
             System.out.println(rack.get(i));
         }
         System.out.println("AI Make Move");
+
+
+        IndexedString validWord = findBestWord();
+        System.out.println(validWord.word);
+        System.out.println(validWord.indexes);
+
         return false;
     }
 }
