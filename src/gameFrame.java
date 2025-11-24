@@ -126,7 +126,7 @@ public class gameFrame extends JFrame implements gameView{
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setPreferredSize(new Dimension(150, 0));
 
-        tilesLabel = new JLabel("Tiles In Bag: ", SwingConstants.CENTER);
+        tilesLabel = new JLabel("Tiles In Bag: "+model.getTileBag().getNumberOfTilesLeft(), SwingConstants.CENTER);
         tilesLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         tilesLabel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
         rightPanel.add(tilesLabel, BorderLayout.NORTH);
@@ -210,7 +210,6 @@ public class gameFrame extends JFrame implements gameView{
         }
     }
 
-
     public void refreshBoard() {
         Cell[][] b = model.getBoard();
 
@@ -224,8 +223,11 @@ public class gameFrame extends JFrame implements gameView{
                 }
             }
         }
+
+
         boardPanel.revalidate();
         boardPanel.repaint();
+        updateScoreDisplay();
     }
 
     private void refreshScoreLabel() {
@@ -257,12 +259,37 @@ public class gameFrame extends JFrame implements gameView{
         return numberOfPlayers;
     }
 
+    public void updateScoreDisplay() {
+        StringBuilder score = new StringBuilder();
+
+        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
+
+            Player player = model.getPlayersList().get(i); // Fix score table error.
+            score.append(player.getName()).append("'s Score: ").append(player.getScore());
+
+            if (i < model.getNumberOfPlayers() - 1) {
+                score.append(", ");
+            }
+        }
+        scoreLabel.setText(score.toString());
+
+        scorePanel.revalidate();
+        scorePanel.repaint();
+    }
+    // Handles advancing turn to the next player. Updates labels and buttons.
     @Override
     public void handleAdvanceTurn() {
+
         Player cp = model.getCurrentPlayer();
+
+
         String text = (cp.getName() + "'s Turn");
         tilesLabelBottom.setText(text);
 
+        //Update current tile
+        tilesLabel.setText("Tiles In Bag: "+model.getTileBag().getNumberOfTilesLeft());
+
+        // Update tile rack on GUI
         for (int i = 0; i < 7; i++) {
             tileButtons[i].setText(String.valueOf(cp.getRack().get(i)));
         }

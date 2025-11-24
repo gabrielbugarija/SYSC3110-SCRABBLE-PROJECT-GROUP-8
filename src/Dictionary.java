@@ -29,22 +29,17 @@ private final Set<String> validWords =  new HashSet<>(Set.of("ability", "absorb"
         "wage", "wait", "walk", "wall", "water",
         "x-ray", "xenon", "xerox", "xylem", "xylophone",
         "yacht", "yard", "year", "yellow", "young",
-        "zebra", "zenith", "zero", "zone", "zodiac","A"));
+        "zebra", "zenith", "zero", "zone", "zodiac"));
 
-
+// Constructor for file pathways(Later milestones)
     public Dictionary() {
 
     }
 
 // Method to return true if provided word is valid or not given the validWords set
 public boolean isValidWord(String word) {
-
-    if (word == null || word.trim().isEmpty()) {
-        return true;
-    }
-    return false;
+    return validWords.contains(word);
 }
-
 
 //  Getter method for all valid words
 public Set<String> getValidWords() {

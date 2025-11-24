@@ -54,8 +54,6 @@ public class Cell  {
     }
 
 
-
-
     public Tile getTile() {
         return tile;
     }
@@ -82,6 +80,8 @@ public class Cell  {
     public void setOccupied() {
         this.empty = false;
     }
+
+
 
 
     @Override
