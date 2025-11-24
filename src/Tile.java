@@ -11,6 +11,8 @@ public class Tile {
 
     private final char letter;
     private final int points;//The tile has points not a multiplier
+    private char assignedLetter; // For blank tiles
+
 
     public Tile(char letter, int points) {
         this.letter = Character.toUpperCase(letter);
@@ -26,11 +28,31 @@ public class Tile {
     }
 
     public int getPoints() {
+        // Blank tiles are always worth 0 points
+        if (isBlank()) {
+            return 0;
+        }
         return points;
+    }
+
+    public void setAssignedLetter(char letter) {
+        if (isBlank()) {
+            this.assignedLetter = Character.toUpperCase(letter);
+        }
+    }
+
+    public char getAssignedLetter() {
+        return assignedLetter;
     }
 
     @Override
     public String toString() {
+        if (isBlank()) {
+            if (assignedLetter != '\0') {
+                return String.valueOf(assignedLetter).toLowerCase(); // Show lowercase for blank
+            }
+            return "*"; // Unassigned blank
+        }
         return String.valueOf(letter);
     }
 }

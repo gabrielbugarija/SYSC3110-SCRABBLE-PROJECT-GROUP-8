@@ -6,13 +6,22 @@ import java.util.Random;
 public class TileBag {
 
     private ArrayList<Tile> tiles;
+    private boolean testMode = true; // SET TO TRUE FOR TESTING
 
     public TileBag(){
         tiles = new ArrayList<>();
         initializeTiles();
     }
+
     private void initializeTiles() {
-        addTiles('\0', 1, 2);
+        if (testMode) {
+            // TESTING MODE: Add lots of blank tiles first
+            addTiles('\0', 0, 10); // 10 blank tiles for easy testing
+        } else {
+            // Normal mode: 2 blank tiles
+            addTiles('\0', 0, 2);
+        }
+
         addTiles('A', 1, 9);
         addTiles('B', 3, 2);
         addTiles('C', 3, 2);
@@ -44,24 +53,8 @@ public class TileBag {
     private void addTiles(char letter, int multiplier, int count) {
         for (int i = 0; i < count; i++) {
             tiles.add(new Tile(letter, multiplier));
-
         }
-
     }
-
-        /*
- function to test drawn tile. Prints letter and number of left of the same letter in the bag.
-    public void checkDraw(char letter){
-        int count = 0;
-        for(int i=0;i<tiles.size();i++){
-            if (tiles.get(i).getLetter()==letter){
-                count++;
-            }
-
-        }
-        System.out.println("\nLeft: " + count);
-    }
-*/
 
     public int getNumberOfTilesLeft() {
         return tiles.size();

@@ -74,6 +74,13 @@ public class Move {
                             System.out.print("Invalid entry. Please try again\n");
                         }
                         tilesToPlace.add(player.getRack().get(tileIndexToPlace));
+
+                        Tile selectedTile = player.getRack().get(tileIndexToPlace);
+                        if (selectedTile.isBlank()) {
+                            assignBlankTile(selectedTile, scanner);
+                        }
+
+                        tilesToPlace.add(selectedTile);
                         int row;
                         int col;
                         while (true) {
@@ -140,6 +147,27 @@ public class Move {
         else if (action == 2) {
             System.out.print("Player passed! ");
         }
+    }
+
+    private void assignBlankTile(Tile tile, Scanner scanner) {
+        if (!tile.isBlank()) {
+            return; // Not a blank tile
+        }
+
+        char assignedLetter;
+        while (true) {
+            System.out.print("This is a blank tile! Enter a letter to assign (A-Z): ");
+            String input = scanner.nextLine().trim().toUpperCase();
+
+            if (input.length() == 1 && Character.isLetter(input.charAt(0))) {
+                assignedLetter = input.charAt(0);
+                break;
+            }
+            System.out.println("Invalid input. Please enter a single letter.");
+        }
+
+        tile.setAssignedLetter(assignedLetter);
+        System.out.println("Blank tile assigned as: " + assignedLetter);
     }
 
     public void placeTiles(Board board, int direction, ArrayList<Tile> tilesToPlace, ArrayList<Integer> rowsList, ArrayList<Integer> columnsList){

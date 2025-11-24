@@ -59,10 +59,14 @@ public class Player {
     }
 
     public void printRack(){
-    for(int i=0;i<rack.size();i++){
-        Tile tile = rack.get(i);
-        System.out.println(tile.getLetter()+": "+tile.getPoints());
-    }
+        for(int i=0; i<rack.size(); i++){
+            Tile tile = rack.get(i);
+            if (tile.isBlank()) {
+                System.out.println("[" + i + "] * (Blank): 0");
+            } else {
+                System.out.println("[" + i + "] " + tile.getLetter() + ": " + tile.getPoints());
+            }
+        }
     }
 
     private void drawTiles(TileBag tileBag, int neededTiles) {
@@ -74,6 +78,10 @@ public class Player {
     public int getScore(){
         return score;
         }
+
+    public void addScore(int points) {
+        this.score += points;
+    }
 
     @Override
     public String toString() {

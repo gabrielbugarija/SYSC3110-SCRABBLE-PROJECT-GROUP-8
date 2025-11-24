@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class gameController implements ActionListener {
     private boolean swapMode = false;
     ArrayList<Integer> tilesToSwap = new ArrayList<>();
     gameModel model;
+
     public gameController(gameModel model){
         this.model = model;
     }
@@ -27,8 +29,24 @@ public class gameController implements ActionListener {
         String command = e.getActionCommand();
         System.out.println(command);
 
+        if (command.equals("Play")) {
+            int points = model.calculateScoreForCurrentMove();
 
+            if (points == 0) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Invalid move or no valid word formed.",
+                        "Invalid Move",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
 
+            model.getCurrentPlayer().addScore(points);
+            System.out.println("Move scored: " + points + " points");
+            model.advanceTurn();     // triggers view updates (and clears move)
+            return;
+        }
 
 
         // If Swap button pressed.
@@ -54,11 +72,9 @@ public class gameController implements ActionListener {
             }
         }
 
-        // If Swap button pressed.
+        // If Pass button pressed.
         if (Objects.equals(command, "Pass")){
-
             model.advanceTurn();
-
         }
 
         if (command.startsWith("Tile: ")) {
@@ -70,11 +86,30 @@ public class gameController implements ActionListener {
             }
             else {
                 model.selectTileIndex(idx);
+
+                // Check if selected tile is blank and prompt for letter
+                Tile selectedTile = model.getSelectedTile();
+                if (selectedTile != null && selectedTile.isBlank() && selectedTile.getAssignedLetter() == '\0') {
+                    String letter = JOptionPane.showInputDialog(
+                            null,
+                            "This is a blank tile! Enter a letter (A-Z):",
+                            "Assign Blank Tile",
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    if (letter != null && letter.length() == 1 && Character.isLetter(letter.charAt(0))) {
+                        selectedTile.setAssignedLetter(letter.charAt(0));
+                        System.out.println("Blank tile assigned as: " + letter.toUpperCase());
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Invalid letter. Please try again.");
+                        return;
+                    }
+                }
+
                 System.out.println("Selected tile index: " + idx);
                 return;
             }
-            }
-
+        }
 
         if (command.matches("\\d+ \\d+")) {
             String[] parts = command.split(" ");
@@ -100,9 +135,6 @@ public class gameController implements ActionListener {
             int c = Integer.parseInt(rc[1]);
             if (model.placeSelectedTileAt(r, c)) {
             }
-
         }
-
-
     }
 }

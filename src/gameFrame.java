@@ -71,10 +71,13 @@ public class gameFrame extends JFrame implements gameView{
             }
         }
 
+
+
         scoreLabel = new JLabel(scoreText.toString());
         scoreLabel.setForeground(Color.WHITE);
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
         scorePanel.add(scoreLabel);
+        refreshScoreLabel();
 
         // Board panel with grid
         boardPanel = new JPanel(new GridLayout(BOARD_SIZE + 1, BOARD_SIZE + 1));
@@ -221,6 +224,21 @@ public class gameFrame extends JFrame implements gameView{
         boardPanel.repaint();
     }
 
+    private void refreshScoreLabel() {
+        StringBuilder scoreText = new StringBuilder();
+        for (int i = 0; i < model.getNumberOfPlayers(); i++) {
+            Player player = model.getPlayersList().get(i);
+            scoreText.append(player.getName())
+                    .append("'s Score: ")
+                    .append(player.getScore());
+            if (i < model.getPlayersList().size() - 1) {
+                scoreText.append("   ");
+            }
+        }
+        scoreLabel.setText(scoreText.toString());
+    }
+
+
     // Initial entry dialogue.
     public int getNumberOfPlayers() {
         int numberOfPlayers = 0;
@@ -246,5 +264,6 @@ public class gameFrame extends JFrame implements gameView{
         }
 
         refreshBoard();
+        refreshScoreLabel();
     }
 }
