@@ -139,6 +139,11 @@ public class AIPlayer extends Player {
         System.out.println(validWord.word);
         System.out.println(validWord.indexes);
 
+
+        for (int i = 0; i < validWord.indexes.size(); i++) {
+            model.setSelectedRackIndex(validWord.indexes.get(i));
+            model.placeSelectedTileAt(7+i,7);
+        }
         return false;
     }
 }
