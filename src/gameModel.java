@@ -21,7 +21,7 @@ public class gameModel {
     private int selectedRackIndex = -1;
     private boolean isFirstMoveDone;
     private Dictionary dictionary;
-
+    private int numberOfAIPlayers;
 
     public gameModel(){
         isFirstMoveDone = false;
@@ -55,9 +55,20 @@ public class gameModel {
         return this.numberOfPlayers;
     }
 
+    public int getNumberOfTotalPlayers(){
+        return this.numberOfPlayers+this.numberOfAIPlayers;
+    }
+
     public void setPlayersList(ArrayList<String> names){
         for (int i = 0; i < numberOfPlayers; i++) {
             playersList.add(new Player(names.get(i), tileBag));
+        }
+    }
+
+    public void setAIPlayersList(){
+        int x=1;
+        for (int i = 0; i < numberOfAIPlayers; i++) {
+            playersList.add(new AIPlayer("AI"+x, tileBag));
         }
     }
 
@@ -127,7 +138,7 @@ public class gameModel {
 
     public void advanceTurn(){
         // next player index.
-        currentPlayer = (currentPlayer+1)%numberOfPlayers;
+        currentPlayer = (currentPlayer+1)%getNumberOfTotalPlayers();
         updateViews();
     }
 
@@ -157,4 +168,13 @@ public class gameModel {
         return dictionary;
     }
 
+
+
+    public void setNumberOfAIPlayers(int AIPlayerNumber) {
+        numberOfAIPlayers = AIPlayerNumber;
+    }
+
+    public int getNumberOfAIPlayers() {
+       return numberOfAIPlayers;
+    }
 }

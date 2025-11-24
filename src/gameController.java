@@ -34,6 +34,50 @@ public class gameController implements ActionListener {
         this.model = model;
     }
 
+    private void checkAndExecuteAITurn() {
+        Player currentPlayer = model.getCurrentPlayer();
+        if (currentPlayer instanceof AIPlayer) {
+            System.out.println("AI Player's turn: " + currentPlayer.getName());
+        }
+        executeAITurn();
+    }
+
+    private void executeAITurn() {
+        Player currentPlayer = model.getCurrentPlayer();
+        if (!(currentPlayer instanceof AIPlayer)) {
+            return;
+        }
+
+        AIPlayer aiPlayer = (AIPlayer) currentPlayer;
+
+        // AI makes its move
+        boolean moveMade = aiPlayer.makeMove(model);
+
+        if (!moveMade) {
+            // AI passes
+            System.out.println(aiPlayer.getName() + " passes turn.");
+        }
+
+        // Set first move if applicable
+        if (!model.isFirstMoveDone()) {
+            model.setFirstMoveDone();
+        }
+
+        // Advance to next player
+        model.advanceTurn();
+        model.updateViews();
+
+        // Check if next player is also AI
+        checkAndExecuteAITurn();
+    }
+
+
+
+
+
+
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -54,8 +98,14 @@ public class gameController implements ActionListener {
                 Player currentPlayer = model.getCurrentPlayer();
                 currentPlayer.drawTiles(); // Draw new tiles to fill rack
                 tilesPlacedThisTurn.clear(); // Clear for next turn
+                if(!model.isFirstMoveDone()){ // Set first move.
+                    model.setFirstMoveDone();
+                }
                 model.advanceTurn();
                 model.updateViews();
+
+                // Check if next player is AI
+                checkAndExecuteAITurn();
             } else {
                 System.out.println("Invalid word placement!");
                 // Optionally: revert tiles back to rack
@@ -86,6 +136,10 @@ public class gameController implements ActionListener {
                 swapMode = false;
                 cp.drawTiles();
                 model.advanceTurn();
+                model.updateViews();
+
+                // Check if next player is AI
+                checkAndExecuteAITurn();
             }
         }
 
@@ -93,6 +147,10 @@ public class gameController implements ActionListener {
         if (Objects.equals(command, "Pass")){
             tilesPlacedThisTurn.clear(); // Clear any placed tiles
             model.advanceTurn();
+            model.updateViews();
+
+            // Check if next player is AI
+            checkAndExecuteAITurn();
         }
 
         if (command.startsWith("Tile: ")) {
@@ -172,8 +230,6 @@ public class gameController implements ActionListener {
                 return false;
             }
         }
-
-
 
         // Check if all tiles are in one line (row or column)
         if (!aretilesInLine()) {
