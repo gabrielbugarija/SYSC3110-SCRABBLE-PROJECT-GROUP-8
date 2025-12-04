@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="Scrabble-Rough:jar2">
-    <output-path>$PROJECT_DIR$/out/artifacts/Scrabble_Rough_jar2</output-path>
+  <artifact type="jar" name="team8-Scrabble">
+    <output-path>$PROJECT_DIR$/out/artifacts/team8_Scrabble</output-path>
     <root id="archive" name="Scrabble-Rough.jar">
       <element id="module-output" name="Scrabble-Rough" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/junit/junit/4.13.1/junit-4.13.1.jar" path-in-jar="/" />
