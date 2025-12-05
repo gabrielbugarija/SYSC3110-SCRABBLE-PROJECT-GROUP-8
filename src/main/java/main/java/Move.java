@@ -1,10 +1,11 @@
+package main.java;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
 public class Move {
-
     private Player player;
 
     public Move(Player player, TileBag tileBag, Board board, Scanner scanner) {
@@ -86,7 +87,7 @@ public class Move {
                             System.out.print("Invalid entry. Please try again\n");
                         }
 
-                            setRow.add(row);
+                        setRow.add(row);
 
 
                         while (true) {
@@ -174,36 +175,36 @@ public class Move {
     }
 
     private void sortPlacementByPosition(ArrayList<Integer> rows, ArrayList<Integer> cols, ArrayList<Tile> tiles, int direction) {
-    ArrayList<Integer> order = new ArrayList<>();
-    for (int i = 0; i < tiles.size(); i++) {
-        order.add(i);
+        ArrayList<Integer> order = new ArrayList<>();
+        for (int i = 0; i < tiles.size(); i++) {
+            order.add(i);
+        }
+
+        if (direction == 0) {
+            // horizontal -> sort by column
+            order.sort((a, b) -> Integer.compare(cols.get(a), cols.get(b)));
+        } else {
+            // vertical -> sort by row
+            order.sort((a, b) -> Integer.compare(rows.get(a), rows.get(b)));
+        }
+
+        ArrayList<Integer> newRows = new ArrayList<>();
+        ArrayList<Integer> newCols = new ArrayList<>();
+        ArrayList<Tile> newTiles = new ArrayList<>();
+
+        for (int index : order) {
+            newRows.add(rows.get(index));
+            newCols.add(cols.get(index));
+            newTiles.add(tiles.get(index));
+        }
+
+        rows.clear();
+        cols.clear();
+        tiles.clear();
+        rows.addAll(newRows);
+        cols.addAll(newCols);
+        tiles.addAll(newTiles);
     }
-
-    if (direction == 0) {
-        // horizontal -> sort by column
-        order.sort((a, b) -> Integer.compare(cols.get(a), cols.get(b)));
-    } else {
-        // vertical -> sort by row
-        order.sort((a, b) -> Integer.compare(rows.get(a), rows.get(b)));
-    }
-
-    ArrayList<Integer> newRows = new ArrayList<>();
-    ArrayList<Integer> newCols = new ArrayList<>();
-    ArrayList<Tile> newTiles = new ArrayList<>();
-
-    for (int index : order) {
-        newRows.add(rows.get(index));
-        newCols.add(cols.get(index));
-        newTiles.add(tiles.get(index));
-    }
-
-    rows.clear();
-    cols.clear();
-    tiles.clear();
-    rows.addAll(newRows);
-    cols.addAll(newCols);
-    tiles.addAll(newTiles);
-}
 
 
 
@@ -421,6 +422,6 @@ public class Move {
         }
         return true;
     }
-    
+
 
 }
