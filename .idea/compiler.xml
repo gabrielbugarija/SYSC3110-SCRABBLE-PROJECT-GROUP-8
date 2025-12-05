@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="scrabble-project" />
         <module name="SYSC3110_SCRABBLE_PROJECT" />
       </profile>
     </annotationProcessing>

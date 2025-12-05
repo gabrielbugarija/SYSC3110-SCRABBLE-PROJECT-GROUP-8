@@ -5,6 +5,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.awt.event.*;
+import java.io.File;
+
 /**
  * @author Kemal Sogut - 101280677
  *
@@ -34,6 +37,11 @@ public class gameFrame extends JFrame implements gameView {
     private JButton[]   tileButtons;
     private JButton[][] boardButtons = new JButton[BOARD_SIZE + 1][BOARD_SIZE + 1];
 
+    private JMenuBar menuBar;
+    private JMenuItem saveItem;
+    private JMenuItem loadItem;
+    private JMenuItem saveAsItem;
+
     public gameFrame() {
 
         // 1) Load boards from JSON
@@ -60,6 +68,8 @@ public class gameFrame extends JFrame implements gameView {
         }
         model.setPlayersList(names);
         model.setAIPlayersList();  // add AI players
+
+        createMenuBar();
 
         setTitle("Scrabble Board");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -222,7 +232,158 @@ public class gameFrame extends JFrame implements gameView {
         setVisible(true);
     }
 
+    private void createMenuBar() {
+        menuBar = new JMenuBar();
 
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+
+        saveItem = new JMenuItem("Save Game", KeyEvent.VK_S);
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        saveItem.addActionListener(e -> saveGame());
+
+        saveAsItem = new JMenuItem("Save Game As...", KeyEvent.VK_A);
+        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() | KeyEvent.SHIFT_DOWN_MASK));
+        saveAsItem.addActionListener(e -> saveGameAs());
+
+        loadItem = new JMenuItem("Load Game", KeyEvent.VK_L);
+        loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        loadItem.addActionListener(e -> loadGame());
+
+        JMenuItem exitItem = new JMenuItem("Exit", KeyEvent.VK_X);
+        exitItem.addActionListener(e -> System.exit(0));
+
+        fileMenu.add(saveItem);
+        fileMenu.add(saveAsItem);
+        fileMenu.add(loadItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
+
+        menuBar.add(fileMenu);
+        setJMenuBar(menuBar);
+    }
+
+    private void loadGame() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Loading a game will replace the current game. Continue?",
+                "Confirm Load",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Load Scrabble Game");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(".dat");
+            }
+
+            @Override
+            public String getDescription() {
+                return "Scrabble Save Files (*.dat)";
+            }
+        });
+
+        // Start in the default save directory
+        String defaultDir = model.getDefaultSaveDirectory();
+        File defaultDirectory = new File(defaultDir);
+        if (defaultDirectory.exists() && defaultDirectory.isDirectory()) {
+            fileChooser.setCurrentDirectory(defaultDirectory);
+        }
+
+        int userSelection = fileChooser.showOpenDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToLoad = fileChooser.getSelectedFile();
+            String filePath = fileToLoad.getAbsolutePath();
+
+            boolean success = model.loadGame(filePath);
+            if (success) {
+                JOptionPane.showMessageDialog(this,
+                        "Game successfully loaded from:\n" + filePath,
+                        "Load Complete",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                // Refresh the display
+                handleAdvanceTurn();
+            }
+        }
+    }
+
+    private void saveGame() {
+        String defaultPath = model.getDefaultSaveFilePath();
+
+        int choice = JOptionPane.showConfirmDialog(this,
+                "Save game to default location?\n" + defaultPath,
+                "Save Game",
+                JOptionPane.YES_NO_CANCEL_OPTION);
+
+        if (choice == JOptionPane.YES_OPTION) {
+            boolean success = model.saveGame(defaultPath);
+            if (success) {
+                JOptionPane.showMessageDialog(this,
+                        "Game successfully saved!",
+                        "Save Complete",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else if (choice == JOptionPane.NO_OPTION) {
+            saveGameAs();
+        }
+    }
+
+    private void saveGameAs() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Game");
+        fileChooser.setSelectedFile(new File("scrabble_save.dat"));
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(".dat");
+            }
+
+            @Override
+            public String getDescription() {
+                return "Scrabble Save Files (*.dat)";
+            }
+        });
+
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+
+            // Ensure .dat extension
+            if (!filePath.toLowerCase().endsWith(".dat")) {
+                filePath += ".dat";
+            }
+
+            // Check if file exists
+            File targetFile = new File(filePath);
+            if (targetFile.exists()) {
+                int overwrite = JOptionPane.showConfirmDialog(this,
+                        "File already exists. Overwrite File?",
+                        "Confirm Overwrite",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (overwrite != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+
+            boolean success = model.saveGame(filePath);
+            if (success) {
+                JOptionPane.showMessageDialog(this,
+                        "Game saved successfully to:\n" + filePath,
+                        "Save Complete",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
 
 
     // Board-selection dialog

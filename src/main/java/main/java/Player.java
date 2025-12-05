@@ -2,12 +2,13 @@ package main.java;
 
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
     //player class
     private String name;
     private int score;
     private ArrayList<Tile> rack;
-    private TileBag tileBag = new TileBag();
+    private transient TileBag tileBag = new TileBag();
 
     public Player(String name, TileBag tileBag){
         this.name = name;
@@ -77,6 +78,10 @@ public class Player {
 
     public void addScore(int score){
         this.score += score;
+    }
+
+    public void setTileBag(TileBag tileBag){
+        this.tileBag = tileBag;
     }
 
     @Override
