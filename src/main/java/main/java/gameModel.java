@@ -2,6 +2,9 @@ package main.java;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
+import java.nio.file.*;
+import javax.swing.*;
 
 /**
  * @author Kemal Sogut - 101280677
@@ -32,6 +35,7 @@ public class gameModel {
     private ArrayList<int[]> tilesPlacedThisTurn = new ArrayList<>();
     private ArrayList<int[]> tilesPlacedLastTurn = new ArrayList<>();
 
+    private int turnNumber = 0;
     /**
      * Default constructor - creates model with standard board.
      */
@@ -276,5 +280,111 @@ public class gameModel {
 
     public ArrayList<int[]> getTilesPlacedLastTurn() {
         return tilesPlacedLastTurn;
+    }
+
+    public boolean saveGame(String filePath) {
+        try {
+            GameState gameState = new GameState(
+                    playersList,
+                    board,
+                    currentPlayer,
+                    tileBag,
+                    isFirstMoveDone,
+                    turnNumber);
+
+            Path path = Paths.get(filePath);
+            Files.createDirectories(path.getParent());
+
+            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(path))) {
+                oos.writeObject(gameState);
+            }
+
+            System.out.println("Saved game state to " + filePath);
+            return true;
+
+        } catch (IOException e) {
+            System.err.println("Error saving game: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Failed to save game: " + e.getMessage(),
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        } catch (Exception e) {
+            System.err.println("Error saving game: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean loadGame(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (!file.exists() || !file.canRead()) {
+                throw new IOException("Cannot read file: " + filePath);
+            }
+
+            GameState gameState;
+            try (ObjectInputStream ois = new ObjectInputStream(
+                    Files.newInputStream(Paths.get(filePath)))) {
+                gameState = (GameState) ois.readObject();
+            }
+
+            if (gameState == null) {
+                throw new IOException("File is empty or corrupted");
+            }
+
+            this.playersList = gameState.getPlayerList();
+            this.currentPlayer = gameState.getCurrentPlayer();
+            this.board = gameState.getBoard();
+            this.tileBag = gameState.getTileBag();
+            this.isFirstMoveDone = gameState.isFirstMoveDone();
+            this.turnNumber = gameState.getTurnNumber();
+
+            for (Player player : playersList) {
+                player.setTileBag(this.tileBag);
+                if (player instanceof AIPlayer) {
+                    ((AIPlayer) player).reinitializeAfterLoad();
+                }
+            }
+
+            System.out.println("Game loaded successfully from: " + filePath);
+            updateViews();
+            return true;
+
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Save file not found: " + filePath,
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        } catch (IOException e) {
+            System.err.println("IO Error loading game: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Error reading save file: " + e.getMessage(),
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        } catch (ClassNotFoundException e) {
+            System.err.println("Class not found during deserialization: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Save file format is incompatible.",
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        } catch (Exception e) {
+            System.err.println("Unexpected error during load: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Failed to load game: " + e.getMessage(),
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+
+    public String getDefaultSaveDirectory() {
+        return System.getProperty("user.home") + File.separator + "ScrabbleSaves";
+    }
+
+    public String getDefaultSaveFilePath() {
+        return getDefaultSaveDirectory() + File.separator + "scrabble_save.dat";
     }
 }

@@ -1,5 +1,7 @@
 package main.java;
 
+import java.io.Serializable;
+
 /**
  *
  * Represents a single cell on the game board.
@@ -8,7 +10,9 @@ package main.java;
  *
  */
 
-public class Cell {
+public class Cell implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int multiplier;
     private Tile tile;
     private boolean empty;

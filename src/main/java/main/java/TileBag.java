@@ -1,9 +1,11 @@
 package main.java; /// @author Kemal Sogut - 101280677
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class TileBag {
+public class TileBag implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private ArrayList<Tile> tiles;
 

@@ -1,8 +1,12 @@
 package main.java; /// @author Kemal Sogut - 101280677
+
+import java.io.Serializable;
+
 /**
  * Represents a game board composed of a 15x15 grid of {@link Cell} objects.
  */
-public class Board {
+public class Board implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /** The 15x15 grid of cells that make up the board. */
     private Cell[][] board;

@@ -1,11 +1,13 @@
 package main.java;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 
 
-public class AIPlayer extends Player {
-    private final Dictionary dictionary;
+public class AIPlayer extends Player implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private transient Dictionary dictionary;
 
     public AIPlayer(String name, TileBag tileBag) {
         super(name, tileBag);
@@ -277,5 +279,9 @@ public class AIPlayer extends Player {
             }
         }
         return -1;
+    }
+
+    public void reinitializeAfterLoad() {
+        this.dictionary = new Dictionary();
     }
 }

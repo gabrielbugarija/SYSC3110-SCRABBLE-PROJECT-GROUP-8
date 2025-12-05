@@ -1,5 +1,7 @@
 package main.java;
 
+import java.io.Serializable;
+
 /**
  *
  *
@@ -9,7 +11,8 @@ package main.java;
  *
  */
 
-public class Tile {
+public class Tile implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final char letter;
     private final int points;//The tile has points not a multiplier
