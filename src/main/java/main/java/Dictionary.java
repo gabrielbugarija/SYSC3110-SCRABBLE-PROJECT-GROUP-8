@@ -3,10 +3,12 @@ package main.java;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 //Gabriel Bugarija 101262776
-public class Dictionary {
+public class Dictionary implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final Set<String> validWords = new HashSet<>();
 

@@ -187,9 +187,23 @@ public class gameFrame extends JFrame implements gameView {
         passButton.setFocusPainted(false);
         passButton.addActionListener(gc);
 
+        JButton undoButton = new JButton("Undo");
+        undoButton.setBackground(Color.RED);
+        undoButton.setForeground(Color.WHITE);
+        undoButton.setFocusPainted(false);
+        undoButton.addActionListener(gc);
+
+        JButton redoButton = new JButton("Redo");
+        redoButton.setBackground(Color.RED);
+        redoButton.setForeground(Color.WHITE);
+        redoButton.setFocusPainted(false);
+        redoButton.addActionListener(gc);
+
         buttonPanel.add(playButton);
         buttonPanel.add(swapButton);
         buttonPanel.add(passButton);
+        buttonPanel.add(undoButton);
+        buttonPanel.add(redoButton);
 
         // --- Player tiles (rack) ---
         tilesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -509,6 +523,7 @@ public class gameFrame extends JFrame implements gameView {
 
         tilesLabelBottom.setText(cp.getName() + "'s Turn");
         tilesLabel.setText("Tiles In Bag: " + model.getTileBag().getNumberOfTilesLeft());
+
 
         for (int i = 0; i < 7 && i < cp.getRack().size(); i++) {
             tileButtons[i].setText(String.valueOf(cp.getRack().get(i)));

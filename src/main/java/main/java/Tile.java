@@ -50,6 +50,11 @@ public class Tile implements Serializable {
         return assignedLetter;
     }
 
+    public Tile deepCopy(){
+        Tile newTile = new Tile(letter, points);
+        return newTile;
+    }
+
     @Override
     public String toString() {
         if (isBlank()) {

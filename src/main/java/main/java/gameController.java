@@ -20,9 +20,12 @@ public class gameController implements ActionListener {
     private boolean swapMode = false;
     ArrayList<Integer> tilesToSwap = new ArrayList<>();
     gameModel model;
+    ArrayList<GameState> undoList = new ArrayList<>();
+    ArrayList<GameState> redoList = new ArrayList<>();
 
     public gameController(gameModel model){
         this.model = model;
+        undoList.add(new GameState(model.getPlayersList(), model.getBoardNoCell(), model.getCurrentPlayerInt(), model.getTileBag(), model.isFirstMoveDone(), model.getTurnNumber(), model.getBoardConfig()));
     }
 
     @Override
@@ -32,6 +35,10 @@ public class gameController implements ActionListener {
         System.out.println(command);
 
         if (command.equals("Play")) {
+            GameState currState = new GameState(model.getPlayersList(), model.getBoardNoCell(), model.getCurrentPlayerInt(), model.getTileBag(), model.isFirstMoveDone(), model.getTurnNumber(), model.getBoardConfig());
+            currState.removeCell(model.getTilesPlacedThisTurn());
+            undoList.add(currState);
+            redoList.clear();
             int points = model.calculateScoreForCurrentMove();
 
             if (points == 0) {
@@ -149,6 +156,26 @@ public class gameController implements ActionListener {
             int c = Integer.parseInt(rc[1]);
             if (model.placeSelectedTileAt(r, c)) {
             }
+        }
+
+        if (command.equals("Undo")){
+            if (undoList.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Cannot Undo anymore");
+            }
+            redoList.add(new GameState(model.getPlayersList(), model.getBoardNoCell(), model.getCurrentPlayerInt()+1, model.getTileBag(), model.isFirstMoveDone(), model.getTurnNumber(), model.getBoardConfig()));
+            model.changeModel(undoList.remove(undoList.size()-1));
+            model.updateViews();
+            return;
+        }
+
+        if (command.equals("Redo")){
+            if (redoList.isEmpty() || model.getTurnNumber() == redoList.size()+1){
+                JOptionPane.showMessageDialog(null, "Cannot Redo");
+            }
+            undoList.add(new GameState(model.getPlayersList(), model.getBoardNoCell(), model.getCurrentPlayerInt(), model.getTileBag(), model.isFirstMoveDone(), model.getTurnNumber(), model.getBoardConfig()));
+            model.changeModel((redoList.remove(redoList.size()-1)));
+            model.advanceTurn();
+            return;
         }
     }
 }

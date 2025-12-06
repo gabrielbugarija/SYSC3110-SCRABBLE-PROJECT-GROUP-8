@@ -13,6 +13,11 @@ public class TileBag implements Serializable {
         tiles = new ArrayList<>();
         initializeTiles();
     }
+
+    public TileBag(int flag){
+        tiles = new ArrayList<>();
+    }
+
     private void initializeTiles() {
         addTiles('\0', 1, 2);
         addTiles('A', 1, 9);
@@ -46,9 +51,7 @@ public class TileBag implements Serializable {
     private void addTiles(char letter, int multiplier, int count) {
         for (int i = 0; i < count; i++) {
             tiles.add(new Tile(letter, multiplier));
-
         }
-
     }
 
         /*
@@ -83,5 +86,13 @@ public class TileBag implements Serializable {
 
     public int size(){
         return tiles.size();
+    }
+
+    public TileBag deepCopy(){
+        TileBag newTileBag = new TileBag(1);
+        for (Tile t: tiles){
+            newTileBag.tiles.add(t.deepCopy());
+        }
+        return newTileBag;
     }
 }

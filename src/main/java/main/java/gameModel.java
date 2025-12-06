@@ -36,6 +36,8 @@ public class gameModel {
     private ArrayList<int[]> tilesPlacedLastTurn = new ArrayList<>();
 
     private int turnNumber = 0;
+
+    private BoardConfig config;
     /**
      * Default constructor - creates model with standard board.
      */
@@ -52,6 +54,7 @@ public class gameModel {
         views = new ArrayList<>();
         dictionary = new Dictionary();
         board = new Board(boardConfig);
+        config = boardConfig;
     }
 
     public void setFirstMoveDone() {
@@ -82,9 +85,15 @@ public class gameModel {
         return numberOfPlayers + numberOfAIPlayers;
     }
 
-    public Player getCurrentPlayer() {
-        return playersList.get(currentPlayer);
-    }
+    public Player getCurrentPlayer() { return playersList.get(currentPlayer);}
+
+    public int getCurrentPlayerInt() {return currentPlayer;}
+
+    public int getTurnNumber() {return turnNumber;}
+
+    public BoardConfig getBoardConfig(){return config;}
+
+    public ArrayList<int[]> getTilesPlacedThisTurn(){return tilesPlacedThisTurn;}
 
     public void setPlayersList(ArrayList<String> names) {
         for (int i = 0; i < numberOfPlayers; i++) {
@@ -149,6 +158,8 @@ public class gameModel {
     public Cell[][] getBoard() {
         return board.getBoard();
     }
+
+    public Board getBoardNoCell() {return board;}
 
     public void addGameView(gameView view) {
         views.add(view);
@@ -237,6 +248,7 @@ public class gameModel {
 
             tilesPlacedThisTurn.clear();
             currentPlayer = (currentPlayer + 1) % total;
+            turnNumber++;
             updateViews();
         }
     }
@@ -290,7 +302,8 @@ public class gameModel {
                     currentPlayer,
                     tileBag,
                     isFirstMoveDone,
-                    turnNumber);
+                    turnNumber,
+                    config);
 
             Path path = Paths.get(filePath);
             Files.createDirectories(path.getParent());
@@ -386,5 +399,14 @@ public class gameModel {
 
     public String getDefaultSaveFilePath() {
         return getDefaultSaveDirectory() + File.separator + "scrabble_save.dat";
+    }
+
+    public void changeModel(GameState state){
+        this.playersList = state.getPlayerList();
+        this.board = state.getBoard();
+        this.currentPlayer = state.getCurrentPlayer();
+        this.tileBag = state.getTileBag();
+        this.isFirstMoveDone = state.isFirstMoveDone();
+        this.turnNumber = state.getTurnNumber();
     }
 }

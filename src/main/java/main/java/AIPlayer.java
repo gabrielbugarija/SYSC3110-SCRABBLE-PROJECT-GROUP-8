@@ -1,13 +1,15 @@
 package main.java;
 
-import java.io.Serializable;
+import main.java.Player;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
-public class AIPlayer extends Player implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private transient Dictionary dictionary;
+public class AIPlayer extends Player {
+    private Dictionary dictionary;
 
     public AIPlayer(String name, TileBag tileBag) {
         super(name, tileBag);

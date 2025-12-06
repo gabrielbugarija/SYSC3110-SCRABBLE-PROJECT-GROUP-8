@@ -209,4 +209,18 @@ public class Board implements Serializable {
         }
         return false;
     }
+
+    public Board deepCopy(BoardConfig config){
+        Board newBoard = new Board(config);
+        for (int i=0; i<15; i++){
+            for (int j=0; j<15; j++){
+                if (!this.board[i][j].isEmpty()) {
+                    newBoard.board[i][j].setTile(this.board[i][j].getTile());
+                    newBoard.board[i][j].setMultiplier(this.board[i][j].getMultiplier());
+                    newBoard.board[i][j].setWordMultiplier(this.board[i][j].isWordMultiplier());
+                }
+            }
+        }
+        return newBoard;
+    }
 }

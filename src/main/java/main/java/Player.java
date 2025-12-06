@@ -59,11 +59,19 @@ public class Player implements java.io.Serializable {
         rack.remove(i);
     }
 
-    public void printRack(){
-    for(int i=0;i<rack.size();i++){
-        Tile tile = rack.get(i);
-        System.out.println(tile.getLetter()+": "+tile.getPoints());
+    public void removeAllTilesFromRack(){
+        int i = 0;
+        for (Tile t : rack){
+            this.removeTiles(i);
+            i++;
+        }
     }
+
+    public void printRack(){
+        for(int i=0;i<rack.size();i++){
+            Tile tile = rack.get(i);
+            System.out.println(tile.getLetter()+": "+tile.getPoints());
+        }
     }
 
     private void drawTiles(TileBag tileBag, int neededTiles) {
@@ -74,7 +82,7 @@ public class Player implements java.io.Serializable {
 
     public int getScore(){
         return score;
-        }
+    }
 
     public void addScore(int score){
         this.score += score;
@@ -84,13 +92,30 @@ public class Player implements java.io.Serializable {
         this.tileBag = tileBag;
     }
 
+    private void setScore(int score) {this.score = score;}
+
+    private void addToRack(Tile tile){this.rack.add(tile);}
+
     @Override
     public String toString() {
         return "\nPlayer Name: "+ this.name + " Score: "+this.score +" \n";
     }
 
     public ArrayList<Tile> getRack() {
-
         return this.rack;
+    }
+
+    public Player deepCopy(){
+        Player newPlayer = new Player(name, tileBag);
+        newPlayer.setScore(score);
+//        for (int i=newPlayer.rack.size(); i<1; i--){
+//            newPlayer.removeTiles(i);
+//        }
+        newPlayer.rack.clear();
+        for (Tile t: this.rack){
+            newPlayer.rack.add(t.deepCopy());
+        }
+        newPlayer.setTileBag(this.tileBag.deepCopy());
+        return newPlayer;
     }
 }
